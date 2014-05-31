@@ -19,5 +19,5 @@
             "Sokil\\Mongo\\Migrator\\": "src"
         }
     },
-    "bin": ["bin/phinx"]
+    "bin": ["bin/mongo-migrator"]
 }
