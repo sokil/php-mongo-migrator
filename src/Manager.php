@@ -127,14 +127,24 @@ class Manager
                 if($migrationMeta['revision'] <= $latestRevision) {
                     continue;
                 }
+                
 
                 require_once $this->_config->getMigrationsDir() . '/' . $migrationMeta['fileName'];
                 $migration = new $migrationMeta['className'];
                 $migration->up();
                 
                 $this->logUp($migrationMeta['revision'], $environment);
+                
+                if($revision && in_array($revision, array($migrationMeta['revision'], $migrationMeta['className']))) {
+                    break;
+                }
             }
         } else {
+            // check if nothing to revert
+            if(!$latestRevision) {
+                return;
+            }
+            
             krsort($availableMigrations);
 
             foreach($availableMigrations as $migrationMeta) {
@@ -147,6 +157,10 @@ class Manager
                 $migration->down();
                 
                 $this->logDown($migrationMeta['revision'], $environment);
+                
+                if(!$revision || in_array($revision, array($migrationMeta['revision'], $migrationMeta['className']))) {
+                    break;
+                }
             }
         }
         
