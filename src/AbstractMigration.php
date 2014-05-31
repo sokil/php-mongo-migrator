@@ -10,7 +10,7 @@ abstract class AbstractMigration
      */
     private $_client;
     
-    public function setClient(\Sokil\Mongo\Client $client)
+    public function __construct(\Sokil\Mongo\Client $client)
     {
         $this->_client = $client;
         return $this;
