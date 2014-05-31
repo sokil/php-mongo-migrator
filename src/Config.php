@@ -59,4 +59,31 @@ class Config
         
         return $this->_config['environments'][$environment]['default_database'];
     }
+    
+    public function getDsn($environment = null)
+    {
+        if(!$environment) {
+            $environment = $this->getDefaultEnvironment();
+        }
+        
+        return $this->_config['environments'][$environment]['dsn'];
+    }
+    
+    public function getLogDatabaseName($environment = null)
+    {
+        if(!$environment) {
+            $environment = $this->getDefaultEnvironment();
+        }
+        
+        return $this->_config['environments'][$environment]['log_database'];
+    }
+    
+    public function getLogCollectionName($environment = null)
+    {
+        if(!$environment) {
+            $environment = $this->getDefaultEnvironment();
+        }
+        
+        return $this->_config['environments'][$environment]['log_collection'];
+    }
 }

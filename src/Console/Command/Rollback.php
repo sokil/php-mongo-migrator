@@ -36,6 +36,6 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
         $environment = $input->getOption('environment');
         
         // execute
-        $this->getManager()->migrate($revision, $environment);
+        $this->getManager()->rollback($revision, $environment);
     }
 }
