@@ -45,4 +45,18 @@ class Config
     {
         return dirname($this->_configFilePath) . '/' . trim($this->_config['path']['migrations'], '/');
     }
+    
+    public function getDefaultEnvironment()
+    {
+        return $this->_config['default_environment'];
+    }
+    
+    public function getDefaultDatabaseName($environment = null)
+    {
+        if(!$environment) {
+            $environment = $this->getDefaultEnvironment();
+        }
+        
+        return $this->_config['environments'][$environment]['default_database'];
+    }
 }

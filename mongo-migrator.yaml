@@ -8,7 +8,10 @@ path:
 environments:
     development:
         dsn: mongodb://localhost
+        default_database: test
     staging:
         dsn: mongodb://localhost
+        default_database: test
     production:
         dsn: mongodb://localhost
+        default_database: test

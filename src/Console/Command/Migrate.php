@@ -15,6 +15,7 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
             ->setName('migrate')
             ->setDescription('Migrate to specific version of database')
             ->addOption('--version', '-v', InputOption::VALUE_OPTIONAL, 'Version of migration')
+            ->addOption('--environment', '-e', InputOption::VALUE_OPTIONAL, 'Environment name')
             ->setHelp('Migrate to specific version of database');
     }
     
