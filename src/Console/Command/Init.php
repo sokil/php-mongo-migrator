@@ -18,6 +18,9 @@ class Init extends \Sokil\Mongo\Migrator\Console\Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {        
         $configPath = $this->getConfigPath();
+        if(file_exists($configPath)) {
+            throw new \Exception('Migration project already initialised');
+        }
         
         // check permissions
         if(!is_writable(dirname($configPath))) {
