@@ -1,0 +1,14 @@
+migration_collection: migrations
+
+default_environment: development
+
+path:
+    migrations: migrations
+    
+environments:
+    development:
+        dsn: mongodb://localhost
+    staging:
+        dsn: mongodb://localhost
+    production:
+        dsn: mongodb://localhost

@@ -1,0 +1,22 @@
+{
+    "name": "sokil/php-mongo-migrator",
+    "description": "Migrations for mongo",
+    "authors": [
+        {
+            "name": "sokil",
+            "email": "dmytro.sokil@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/console": "2.4.*",
+        "sokil/php-mongo": "1.0.*",
+        "symfony/yaml": "2.*"
+        
+    },
+    "autoload": {
+        "psr-4": {
+            "Sokil\\Mongo\\Migrator\\": "src"
+        }
+    },
+    "bin": ["bin/phinx"]
+}
