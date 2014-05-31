@@ -1,6 +1,7 @@
 {
     "name": "sokil/php-mongo-migrator",
     "description": "Migrations for mongo",
+    "license": "MIT",
     "authors": [
         {
             "name": "sokil",
