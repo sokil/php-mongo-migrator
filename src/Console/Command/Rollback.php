@@ -14,14 +14,28 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
         $this
             ->setName('rollback')
             ->setDescription('Rollback to specific version of database')
-            ->addOption('--version', '-v', InputOption::VALUE_REQUIRED, 'Version of migration')
-            ->setHelp('Rollback to specific version of database');
+            ->addOption(
+                '--revision', '-r',
+                InputArgument::OPTIONAL,
+                'Revision of migration'
+            )
+            ->addOption(
+                '--environment', '-e',
+                InputArgument::OPTIONAL, 'Environment name', 
+                $this->getConfig()->getDefaultEnvironment()
+            )
+            ->setHelp('Rollback to specific revision of database');
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $version = $input->getOption('version');
+        // version
+        $revision = $input->getOption('revision');
         
-        $output->writeln('Rollback to version' . $version);
+        // environment
+        $environment = $input->getOption('environment');
+        
+        // execute
+        $this->getManager()->migrate($revision, $environment);
     }
 }

@@ -8,6 +8,12 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
 {
     private $_config;
     
+    /**
+     *
+     * @var \Sokil\Mongo\Migrator\Manager
+     */
+    private $_manager;
+    
     const CONFIG_FILENAME = 'mongo-migrator.yaml';
     
     /**
@@ -26,5 +32,18 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     public function getConfigPath()
     {
         return getcwd() . '/' . self::CONFIG_FILENAME;
+    }
+    
+    /**
+     * 
+     * @return \Sokil\Mongo\Migrator\Manager
+     */
+    public function getManager()
+    {
+        if(!$this->_manager) {
+            $this->_manager = new \Sokil\Mongo\Migrator\Manager($this->getConfig());
+        }
+        
+        return $this->_manager;
     }
 }
