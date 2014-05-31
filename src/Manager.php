@@ -35,6 +35,8 @@ class Manager
     {
         if(empty($this->_client[$environment])) {
             $this->_client[$environment] = new \Sokil\Mongo\Client($this->_config->getDsn($environment));
+            
+            $this->_client[$environment]->useDatabase($this->_config->getDefaultDatabaseName());
         }
         
         return $this->_client[$environment];
@@ -130,7 +132,7 @@ class Manager
                 
 
                 require_once $this->_config->getMigrationsDir() . '/' . $migrationMeta['fileName'];
-                $migration = new $migrationMeta['className'];
+                $migration = new $migrationMeta['className']($this->getClient($environment));
                 $migration->up();
                 
                 $this->logUp($migrationMeta['revision'], $environment);
@@ -153,7 +155,7 @@ class Manager
                 }
 
                 require_once $this->_config->getMigrationsDir() . '/' . $migrationMeta['fileName'];
-                $migration = new $migrationMeta['className'];
+                $migration = new $migrationMeta['className']($this->getClient($environment));
                 $migration->down();
                 
                 $this->logDown($migrationMeta['revision'], $environment);
