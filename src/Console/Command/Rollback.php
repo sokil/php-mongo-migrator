@@ -21,8 +21,8 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
             )
             ->addOption(
                 '--environment', '-e',
-                InputArgument::OPTIONAL, 'Environment name', 
-                $this->getConfig()->getDefaultEnvironment()
+                InputArgument::OPTIONAL, 
+                'Environment name'
             )
             ->setHelp('Rollback to specific revision of database');
     }
@@ -34,6 +34,9 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
         
         // environment
         $environment = $input->getOption('environment');
+        if(!$environment) {
+            $environment = $this->getConfig()->getDefaultEnvironment();
+        }
         
         // execute
         $this->getManager()->rollback($revision, $environment);

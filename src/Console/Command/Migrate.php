@@ -21,8 +21,8 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
             )
             ->addOption(
                 '--environment', '-e',
-                InputArgument::OPTIONAL, 'Environment name', 
-                $this->getConfig()->getDefaultEnvironment()
+                InputArgument::OPTIONAL, 
+                'Environment name'
             )
             ->setHelp('Migrate to specific revision of database');
     }
@@ -34,6 +34,9 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
         
         // environment
         $environment = $input->getOption('environment');
+        if(!$environment) {
+            $environment = $this->getConfig()->getDefaultEnvironment();
+        }
         
         // execute
         $this->getManager()->migrate($revision, $environment);
