@@ -26,7 +26,7 @@ class Manager
      */
     private $_logCollection;
     
-    private $_appliedRevisions;
+    private $_appliedRevisions = array();
     
     /**
      *
@@ -80,7 +80,7 @@ class Manager
         return $list;
     }
     
-    private function getLogCollection($environment)
+    protected function getLogCollection($environment)
     {
         if($this->_logCollection) {
             return $this->_logCollection;
@@ -97,7 +97,7 @@ class Manager
         return $this->_logCollection;
     }
     
-    private function logUp($revision, $environment)
+    protected function logUp($revision, $environment)
     {
         $this->getLogCollection($environment)->createDocument(array(
             'revision'  => $revision,
@@ -107,7 +107,7 @@ class Manager
         return $this;
     }
     
-    private function logDown($revision, $environment)
+    protected function logDown($revision, $environment)
     {
         $collection = $this->getLogCollection($environment);
         $collection->deleteDocuments($collection->expression()->where('revision', $revision));
@@ -115,19 +115,25 @@ class Manager
         return $this;
     }
     
-    private function getAppliedRevisions($environment)
+    public function getAppliedRevisions($environment)
     {
         if(isset($this->_appliedRevisions[$environment])) {
             return $this->_appliedRevisions[$environment];
         }
         
-        $this->_appliedRevisions[$environment] = array_values($this
+        $documents = array_values($this
             ->getLogCollection($environment)
             ->find()
             ->sort(array('revision' => 1))
             ->map(function($document) {
                 return $document->revision;
             }));
+            
+        if(!$documents) {
+            return array();
+        }
+        
+        $this->_appliedRevisions[$environment] = $documents;
             
         return $this->_appliedRevisions[$environment];
     }
@@ -137,12 +143,12 @@ class Manager
         return in_array($revision, $this->getAppliedRevisions($environment));
     }
     
-    private function getLatestAppliedRevisionId($environment)
+    protected function getLatestAppliedRevisionId($environment)
     {
         return end($this->getAppliedRevisions($environment));
     }
     
-    private function executeMigration($targetRevision, $environment, $direction)
+    protected function executeMigration($targetRevision, $environment, $direction)
     {
         $this->_eventDispatcher->dispatch('start');
         
