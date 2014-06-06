@@ -7,6 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Sokil\Mongo\Migrator\Event\ApplyRevisionEvent;
+
 class Rollback extends \Sokil\Mongo\Migrator\Console\Command
 {
     protected function configure()
@@ -40,11 +42,12 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
         
         // execute
         $this->getManager()
-            ->onBeforeRollbackRevision(function() use($output) {
-                $output->writeln('before');
+            ->onBeforeRollbackRevision(function(ApplyRevisionEvent $event) use($output) {
+                $revision = $event->getRevision();
+                $output->writeln('Rollback to revision <info>' . $revision->getId() . '</info> ' . $revision->getName() . ' ...');
             })
-            ->onRollbackRevision(function() use($output) {
-                $output->writeln('after');
+            ->onRollbackRevision(function(ApplyRevisionEvent $event) use($output) {
+                $output->writeln('done.');
             })
             ->rollback($revision, $environment);
     }

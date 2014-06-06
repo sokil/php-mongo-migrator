@@ -7,6 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Sokil\Mongo\Migrator\Event\ApplyRevisionEvent;
+
 class Migrate extends \Sokil\Mongo\Migrator\Console\Command
 {
     protected function configure()
@@ -40,11 +42,12 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
         
         // execute
         $this->getManager()
-            ->onBeforeMigrateRevision(function() use($output) {
-                $output->writeln('before');
+            ->onBeforeMigrateRevision(function(ApplyRevisionEvent $event) use($output) {
+                $revision = $event->getRevision();
+                $output->writeln('Migration to revision <info>' . $revision->getId() . '</info> ' . $revision->getName() . ' ...');
             })
-            ->onMigrateRevision(function() use($output) {
-                $output->writeln('after');
+            ->onMigrateRevision(function(ApplyRevisionEvent $event) use($output) {
+                $output->writeln('done.');
             })
             ->migrate($revision, $environment);
     }

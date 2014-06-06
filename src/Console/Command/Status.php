@@ -43,18 +43,18 @@ class Status extends \Sokil\Mongo\Migrator\Console\Command
         // body
         $manager = $this->getManager();
         
-        foreach($manager->getAvailableMigrations() as $migration) {
+        foreach($manager->getAvailableRevisions() as $revision) {
             
-            if($manager->isRevisionApplied($migration['revision'], $environment)) {
+            if($manager->isRevisionApplied($revision->getId(), $environment)) {
                 $status = '<info>up</info>' . str_repeat(' ', $columnWidth[1] - 2);
             } else {
                 $status = '<error>down</error>' . str_repeat(' ', $columnWidth[1] - 4);
             }
             
             $output->writeln(' ' . 
-                str_pad($migration['revision'], $columnWidth[0], ' ') . 
+                str_pad($revision->getId(), $columnWidth[0], ' ') . 
                 $status . 
-                str_pad($migration['className'], $columnWidth[2], ' ')
+                str_pad($revision->getName(), $columnWidth[2], ' ')
             );
         }
         

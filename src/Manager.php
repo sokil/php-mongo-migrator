@@ -2,6 +2,10 @@
 
 namespace Sokil\Mongo\Migrator;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
+use Sokil\Mongo\Migrator\Event\ApplyRevisionEvent;
+
 class Manager
 {
     /**
@@ -34,7 +38,7 @@ class Manager
     {
         $this->_config = $config;
         
-        $this->_eventDispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher;
+        $this->_eventDispatcher = new EventDispatcher;
     }
     
     /**
@@ -52,7 +56,7 @@ class Manager
         return $this->_client[$environment];
     }
     
-    public function getAvailableMigrations()
+    public function getAvailableRevisions()
     {
         $list = array();
         foreach(new \DirectoryIterator($this->_config->getMigrationsDir()) as $file) {
@@ -60,13 +64,15 @@ class Manager
                 continue;
             }
             
-            list($revision, $className) = explode('_', $file->getBasename('.php'));
+            list($id, $className) = explode('_', $file->getBasename('.php'));
             
-            $list[$revision] = array(
-                'revision'  => $revision,
-                'className' => $className,
-                'fileName'  => $file->getFilename(),
-            );
+            $revision = new Revision();
+            $revision
+                ->setId($id)
+                ->setName($className)
+                ->setFilename($file->getFilename());
+            
+            $list[$id] = $revision;
             
             krsort($list);
         }
@@ -131,44 +137,49 @@ class Manager
         return in_array($revision, $this->getAppliedRevisions($environment));
     }
     
-    private function getLatestAppliedRevision($environment)
+    private function getLatestAppliedRevisionId($environment)
     {
         return end($this->getAppliedRevisions($environment));
     }
     
-    private function executeMigration($revision, $environment, $direction)
+    private function executeMigration($targetRevision, $environment, $direction)
     {
         $this->_eventDispatcher->dispatch('start');
         
         // get last applied migration
-        $latestRevision = $this->getLatestAppliedRevision($environment);
+        $latestRevisionId = $this->getLatestAppliedRevisionId($environment);
         
         // get list of migrations
-        $availableMigrations = $this->getAvailableMigrations();
+        $availableRevisions = $this->getAvailableRevisions();
         
         // execute
         if($direction === 1) {
             $this->_eventDispatcher->dispatch('before_migrate');
             
-            ksort($availableMigrations);
+            ksort($availableRevisions);
 
-            foreach($availableMigrations as $migrationMeta) {
+            foreach($availableRevisions as $revision) {
                 
-                if($migrationMeta['revision'] <= $latestRevision) {
+                if($revision->getId() <= $latestRevisionId) {
                     continue;
                 }
                 
-                $this->_eventDispatcher->dispatch('before_migrate_revision');
+                $event = new ApplyRevisionEvent();
+                $event->setRevision($revision);
+                
+                $this->_eventDispatcher->dispatch('before_migrate_revision', $event);
 
-                require_once $this->_config->getMigrationsDir() . '/' . $migrationMeta['fileName'];
-                $migration = new $migrationMeta['className']($this->getClient($environment));
+                require_once $this->_config->getMigrationsDir() . '/' . $revision->getFilename();
+                $className = $revision->getName();
+                
+                $migration = new $className($this->getClient($environment));
                 $migration->up();
                 
-                $this->logUp($migrationMeta['revision'], $environment);
+                $this->logUp($revision->getId(), $environment);
                 
-                $this->_eventDispatcher->dispatch('migrate_revision');
+                $this->_eventDispatcher->dispatch('migrate_revision', $event);
                 
-                if($revision && in_array($revision, array($migrationMeta['revision'], $migrationMeta['className']))) {
+                if($targetRevision && in_array($targetRevision, array($revision->getId(), $revision->getName()))) {
                     break;
                 }
             }
@@ -179,29 +190,34 @@ class Manager
             $this->_eventDispatcher->dispatch('before_rollback');
             
             // check if nothing to revert
-            if(!$latestRevision) {
+            if(!$latestRevisionId) {
                 return;
             }
             
-            krsort($availableMigrations);
+            krsort($availableRevisions);
 
-            foreach($availableMigrations as $migrationMeta) {
+            foreach($availableRevisions as $revision) {
 
-                if($migrationMeta['revision'] > $latestRevision) {
+                if($revision->getId() > $latestRevisionId) {
                     continue;
                 }
                 
-                $this->_eventDispatcher->dispatch('before_rollback_revision');
+                $event = new ApplyRevisionEvent();
+                $event->setRevision($revision);
+                
+                $this->_eventDispatcher->dispatch('before_rollback_revision', $event);
 
-                require_once $this->_config->getMigrationsDir() . '/' . $migrationMeta['fileName'];
-                $migration = new $migrationMeta['className']($this->getClient($environment));
+                require_once $this->_config->getMigrationsDir() . '/' . $revision->getFilename();
+                $className = $revision->getName();
+                
+                $migration = new $className($this->getClient($environment));
                 $migration->down();
                 
-                $this->logDown($migrationMeta['revision'], $environment);
+                $this->logDown($revision->getId(), $environment);
                 
-                $this->_eventDispatcher->dispatch('rollback_revision');
+                $this->_eventDispatcher->dispatch('rollback_revision', $event);
                 
-                if(!$revision || in_array($revision, array($migrationMeta['revision'], $migrationMeta['className']))) {
+                if(!$targetRevision || in_array($targetRevision, array($revision->getId(), $revision->getName()))) {
                     break;
                 }
             }
