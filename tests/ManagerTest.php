@@ -22,6 +22,11 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $this->_manager = new ManagerMock($config);
     }
     
+    public function tearDown()
+    {
+        $this->_manager->resetCollection('staging');
+    }
+    
     public function testGetAvailableRevisions()
     {
         $availableRevisions = $this->_manager->getAvailableRevisions();
