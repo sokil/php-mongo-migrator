@@ -9,6 +9,8 @@
         }
     ],
     "require": {
+        "php": ">=5.3",
+        "ext-mongo": ">=0.9.0",
         "symfony/console": "2.4.*",
         "sokil/php-mongo": "1.0.*",
         "symfony/yaml": "2.*",
