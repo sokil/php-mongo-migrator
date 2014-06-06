@@ -211,7 +211,7 @@ class Manager
     
     public function onRollback($listener)
     {
-        $this->_eventDispatcher->addListener(;rollback, $listener);
+        $this->_eventDispatcher->addListener('rollback', $listener);
         return $this;
     }
     
