@@ -22,6 +22,8 @@ class Manager
      */
     private $_logCollection;
     
+    private $_appliedRevisions;
+    
     public function __construct(Config $config)
     {
         $this->_config = $config;
@@ -42,7 +44,7 @@ class Manager
         return $this->_client[$environment];
     }
     
-    private function getAvailableMigrations()
+    public function getAvailableMigrations()
     {
         $list = array();
         foreach(new \DirectoryIterator($this->_config->getMigrationsDir()) as $file) {
@@ -57,6 +59,8 @@ class Manager
                 'className' => $className,
                 'fileName'  => $file->getFilename(),
             );
+            
+            krsort($list);
         }
         
         return $list;
@@ -99,13 +103,24 @@ class Manager
     
     private function getAppliedRevisions($environment)
     {
-        return array_values($this
+        if(isset($this->_appliedRevisions[$environment])) {
+            return $this->_appliedRevisions[$environment];
+        }
+        
+        $this->_appliedRevisions[$environment] = array_values($this
             ->getLogCollection($environment)
             ->find()
             ->sort(array('revision' => 1))
             ->map(function($document) {
                 return $document->revision;
             }));
+            
+        return $this->_appliedRevisions[$environment];
+    }
+    
+    public function isRevisionApplied($revision, $environment)
+    {
+        return in_array($revision, $this->getAppliedRevisions($environment));
     }
     
     private function getLatestAppliedRevision($environment)
