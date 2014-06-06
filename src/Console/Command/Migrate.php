@@ -39,6 +39,13 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
         }
         
         // execute
-        $this->getManager()->migrate($revision, $environment);
+        $this->getManager()
+            ->onBeforeMigrateRevision(function() use($output) {
+                $output->writeln('before');
+            })
+            ->onMigrateRevision(function() use($output) {
+                $output->writeln('after');
+            })
+            ->migrate($revision, $environment);
     }
 }

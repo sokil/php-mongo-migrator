@@ -39,6 +39,13 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
         }
         
         // execute
-        $this->getManager()->rollback($revision, $environment);
+        $this->getManager()
+            ->onBeforeRollbackRevision(function() use($output) {
+                $output->writeln('before');
+            })
+            ->onRollbackRevision(function() use($output) {
+                $output->writeln('after');
+            })
+            ->rollback($revision, $environment);
     }
 }

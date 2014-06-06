@@ -28,11 +28,13 @@ class Manager
      *
      * @var \Symfony\Component\EventDispatcher\EventDispatcher
      */
-    private function $_eventDispatcher;
+    private $_eventDispatcher;
     
     public function __construct(Config $config)
     {
         $this->_config = $config;
+        
+        $this->_eventDispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher;
     }
     
     /**
@@ -136,7 +138,7 @@ class Manager
     
     private function executeMigration($revision, $environment, $direction)
     {
-        $this->_eventDispatcher->dispatch('before_change_revision');
+        $this->_eventDispatcher->dispatch('start');
         
         // get last applied migration
         $latestRevision = $this->getLatestAppliedRevision($environment);
@@ -151,16 +153,20 @@ class Manager
             ksort($availableMigrations);
 
             foreach($availableMigrations as $migrationMeta) {
+                
                 if($migrationMeta['revision'] <= $latestRevision) {
                     continue;
                 }
                 
+                $this->_eventDispatcher->dispatch('before_migrate_revision');
 
                 require_once $this->_config->getMigrationsDir() . '/' . $migrationMeta['fileName'];
                 $migration = new $migrationMeta['className']($this->getClient($environment));
                 $migration->up();
                 
                 $this->logUp($migrationMeta['revision'], $environment);
+                
+                $this->_eventDispatcher->dispatch('migrate_revision');
                 
                 if($revision && in_array($revision, array($migrationMeta['revision'], $migrationMeta['className']))) {
                     break;
@@ -180,15 +186,20 @@ class Manager
             krsort($availableMigrations);
 
             foreach($availableMigrations as $migrationMeta) {
+
                 if($migrationMeta['revision'] > $latestRevision) {
                     continue;
                 }
+                
+                $this->_eventDispatcher->dispatch('before_rollback_revision');
 
                 require_once $this->_config->getMigrationsDir() . '/' . $migrationMeta['fileName'];
                 $migration = new $migrationMeta['className']($this->getClient($environment));
                 $migration->down();
                 
                 $this->logDown($migrationMeta['revision'], $environment);
+                
+                $this->_eventDispatcher->dispatch('rollback_revision');
                 
                 if(!$revision || in_array($revision, array($migrationMeta['revision'], $migrationMeta['className']))) {
                     break;
@@ -198,7 +209,7 @@ class Manager
             $this->_eventDispatcher->dispatch('rollback');
         }
         
-        $this->_eventDispatcher->dispatch('change_revision');
+        $this->_eventDispatcher->dispatch('stop');
     }
     
     public function migrate($revision, $environment)
@@ -213,9 +224,27 @@ class Manager
         return $this;
     }
 
+    public function onStart($listener)
+    {
+        $this->_eventDispatcher->addListener('start', $listener);
+        return $this;
+    }
+    
     public function onBeforeMigrate($listener)
     {
         $this->_eventDispatcher->addListener('before_migrate', $listener);
+        return $this;
+    }
+    
+    public function onBeforeMigrateRevision($listener)
+    {
+        $this->_eventDispatcher->addListener('before_migrate_revision', $listener);
+        return $this;
+    }
+    
+    public function onMigrateRevision($listener)
+    {
+        $this->_eventDispatcher->addListener('migrate_revision', $listener);
         return $this;
     }
     
@@ -231,21 +260,27 @@ class Manager
         return $this;
     }
     
+    public function onBeforeRollbackRevision($listener)
+    {
+        $this->_eventDispatcher->addListener('before_rollback_revision', $listener);
+        return $this;
+    }
+    
+    public function onRollbackRevision($listener)
+    {
+        $this->_eventDispatcher->addListener('rollback_revision', $listener);
+        return $this;
+    }
+    
     public function onRollback($listener)
     {
         $this->_eventDispatcher->addListener('rollback', $listener);
         return $this;
     }
     
-    public function onBeforeChangeRevision($listener)
+    public function onStop($listener)
     {
-        $this->_eventDispatcher->addListener('before_change_revision', $listener);
-        return $this;
-    }
-    
-    public function onChangeRevision($listener)
-    {
-        $this->_eventDispatcher->addListener('change_revision', $listener);
+        $this->_eventDispatcher->addListener('stop', $listener);
         return $this;
     }
 }
