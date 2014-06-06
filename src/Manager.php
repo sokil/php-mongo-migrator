@@ -24,6 +24,12 @@ class Manager
     
     private $_appliedRevisions;
     
+    /**
+     *
+     * @var \Symfony\Component\EventDispatcher\EventDispatcher
+     */
+    private function $_eventDispatcher;
+    
     public function __construct(Config $config)
     {
         $this->_config = $config;
@@ -181,16 +187,37 @@ class Manager
             }
         }
         
-        
+        $this->_eventDispatcher->dispatch('change_revision');
     }
     
     public function migrate($revision, $environment)
     {
         $this->executeMigration($revision, $environment, 1);
+        
+        $this->_eventDispatcher->dispatch('migrate');
     }
     
     public function rollback($revision, $environment)
     {
         $this->executeMigration($revision, $environment, -1);
+        $this->_eventDispatcher->dispatch('rollback');
+    }
+    
+    public function onMigrate($listener)
+    {
+        $this->_eventDispatcher->addListener('migrate', $listener);
+        return $this;
+    }
+    
+    public function onRollback($listener)
+    {
+        $this->_eventDispatcher->addListener(;rollback, $listener);
+        return $this;
+    }
+    
+    public function onChangeRevision($listener)
+    {
+        $this->_eventDispatcher->addListener('change_revision', $listener);
+        return $this;
     }
 }
