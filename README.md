@@ -182,7 +182,14 @@ class RevisionName extends \Sokil\Mongo\Migrator\AbstractMigration
     
     public function down()
     {
-        
+        $collection = $this
+            ->getDatabase('some_database')
+            ->getCollection('come_collection');
+
+        // create new field in all documents of collection
+        $collection->updateAll(
+            $collection->operator()->unsetField('newField', 'defaultValue')
+        );
     }
 }
 ```
