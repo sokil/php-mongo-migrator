@@ -188,7 +188,7 @@ class RevisionName extends \Sokil\Mongo\Migrator\AbstractMigration
 
         // create new field in all documents of collection
         $collection->updateAll(
-            $collection->operator()->unsetField('newField', 'defaultValue')
+            $collection->operator()->unsetField('newField')
         );
     }
 }
