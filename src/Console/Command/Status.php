@@ -29,6 +29,8 @@ class Status extends \Sokil\Mongo\Migrator\Console\Command
             $environment = $this->getConfig()->getDefaultEnvironment();
         }
         
+        $output->writeln('Environment: <comment>' . $environment . '</comment>');
+        
         // header
         $columnWidth = array(16, 8, 16);
         $output->writeln('');

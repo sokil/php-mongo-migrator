@@ -40,6 +40,8 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
             $environment = $this->getConfig()->getDefaultEnvironment();
         }
         
+        $output->writeln('Environment: <comment>' . $environment . '</comment>');
+        
         // execute
         $this->getManager()
             ->onBeforeRollbackRevision(function(ApplyRevisionEvent $event) use($output) {

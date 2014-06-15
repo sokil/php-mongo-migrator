@@ -40,6 +40,8 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
             $environment = $this->getConfig()->getDefaultEnvironment();
         }
         
+        $output->writeln('Environment: <comment>' . $environment . '</comment>');
+        
         // execute
         $this->getManager()
             ->onBeforeMigrateRevision(function(ApplyRevisionEvent $event) use($output) {
