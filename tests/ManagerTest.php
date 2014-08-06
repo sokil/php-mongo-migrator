@@ -20,6 +20,8 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $config = new Config($configFile);
         
         $this->_manager = new ManagerMock($config);
+        
+        $this->_manager->resetCollection('staging');
     }
     
     public function tearDown()
@@ -59,9 +61,10 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         
         $this->_manager->rollback('20140531201024', 'staging');
         
-        $this->assertTrue($this->_manager->isRevisionApplied('20140531201024', 'staging'));
         $this->assertTrue($this->_manager->isRevisionApplied('20140531201019', 'staging'));
+        $this->assertTrue($this->_manager->isRevisionApplied('20140531201024', 'staging'));
         
+        $this->assertFalse($this->_manager->isRevisionApplied('20140531201025', 'staging'));
         $this->assertFalse($this->_manager->isRevisionApplied('20140531201027', 'staging'));
     }
 }

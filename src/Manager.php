@@ -208,6 +208,10 @@ class Manager
                     continue;
                 }
                 
+                if($targetRevision && in_array($targetRevision, array($revision->getId(), $revision->getName()))) {
+                    break;
+                }
+                
                 $event = new ApplyRevisionEvent();
                 $event->setRevision($revision);
                 
@@ -223,7 +227,7 @@ class Manager
                 
                 $this->_eventDispatcher->dispatch('rollback_revision', $event);
                 
-                if(!$targetRevision || in_array($targetRevision, array($revision->getId(), $revision->getName()))) {
+                if(!$targetRevision) {
                     break;
                 }
             }
@@ -232,6 +236,9 @@ class Manager
         }
         
         $this->_eventDispatcher->dispatch('stop');
+        
+        // clear cached applied revisions
+        unset($this->_appliedRevisions[$environment]);
     }
     
     public function migrate($revision, $environment)
