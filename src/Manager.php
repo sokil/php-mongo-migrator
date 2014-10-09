@@ -145,7 +145,8 @@ class Manager
     
     protected function getLatestAppliedRevisionId($environment)
     {
-        return end($this->getAppliedRevisions($environment));
+        $revisions = $this->getAppliedRevisions($environment);
+        return end($revisions);
     }
     
     protected function executeMigration($targetRevision, $environment, $direction)
