@@ -1,0 +1,19 @@
+language: php
+php:
+  - 5.5
+  - 5.4
+  - 5.3
+
+services: mongodb
+
+before_script:
+  - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - composer install --dev --no-interaction
+  
+script:
+  - mongod --version
+  - mkdir -p build/logs
+  - phpunit --bootstrap ./tests/bootstrap.php -c tests/configuration.xml --coverage-clover build/logs/clover.xml tests
+  
+after_script:
+  - php ./vendor/bin/coveralls -v
