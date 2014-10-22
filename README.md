@@ -8,6 +8,12 @@ Migrations for MongoDb.
 [![Coverage Status](https://coveralls.io/repos/sokil/php-mongo-migrator/badge.png)](https://coveralls.io/r/sokil/php-mongo-migrator)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/sokil/php-mongo-migrator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+Schema not required in MongoDb, so we dont need to create databases, collections or altering them. However there are some cases when migrations required in schemaless databases:
+* Creating collections with special parameters, like capped collection;
+* Renaming or deleting collections;
+* Creating, renaming or deleting fields;
+* Creting, changing or deleting indexes
+
 Installation
 ------------
 
