@@ -1,4 +1,4 @@
-PHP Mongo Migrator
+PHPMongo Migrator
 ==================
 
 Migrations for MongoDb.
@@ -17,8 +17,7 @@ Schema not required in MongoDb, so we dont need to create databases, collections
 Installation
 ------------
 
-Migrations allows you easily change schema and data versions. This functionality implemented in 
-packet https://github.com/sokil/php-mongo-migrator and can be installed through composer:
+Installation through composer:
 
 ```php
 {
