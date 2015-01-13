@@ -184,9 +184,9 @@ class RevisionName extends \Sokil\Mongo\Migrator\AbstractMigration
             ->getCollection('come_collection');
 
         // create new field in all documents of collection
-        $collection->updateAll(
-            $collection->operator()->set('newField', 'defaultValue')
-        );
+        $collection->updateAll(function($operator) {
+            $operator->set('newField', 'defaultValue')
+        });
     }
     
     public function down()
@@ -196,9 +196,9 @@ class RevisionName extends \Sokil\Mongo\Migrator\AbstractMigration
             ->getCollection('come_collection');
 
         // create new field in all documents of collection
-        $collection->updateAll(
+        $collection->updateAll(function($operator) {
             $collection->operator()->unsetField('newField')
-        );
+        });
     }
 }
 ```
