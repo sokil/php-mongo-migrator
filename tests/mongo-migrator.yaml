@@ -11,11 +11,11 @@ environments:
         
         log_database: test
         log_collection: migrations
-    
+        
     staging:
         dsn: mongodb://localhost
         
-        default_database: test
+        default_database: staging_db
         
         log_database: test
         log_collection: migrations
@@ -27,3 +27,5 @@ environments:
         
         log_database: test
         log_collection: migrations
+        
+    

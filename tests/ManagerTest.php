@@ -42,6 +42,21 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Test5', $revision->getName());
         $this->assertEquals('20140531201029_Test5.php', $revision->getFilename());
     }
+
+    public function testGetClient()
+    {
+        $reflectionClass = new \ReflectionClass($this->_manager);
+        $method = $reflectionClass->getMethod('getClient');
+        $method->setAccessible(true);
+
+        $devClient = $method->invoke($this->_manager, 'development');
+        $this->assertInstanceof('\Sokil\Mongo\Client', $devClient);
+        $this->assertEquals('test', $devClient->getCurrentDatabaseName());
+
+        $stagingClient = $method->invoke($this->_manager, 'staging');
+        $this->assertInstanceof('\Sokil\Mongo\Client', $stagingClient);
+        $this->assertEquals('staging_db', $stagingClient->getCurrentDatabaseName());
+    }
     
     public function testMigrate()
     {
