@@ -4,5 +4,10 @@
     <testsuite name="AllTests">
       <directory>.</directory>
     </testsuite>
+    <filter>
+        <blacklist>
+            <directory suffix=".php">.</directory>
+        </blacklist>
+    </filter>
   </testsuites>
 </phpunit>
