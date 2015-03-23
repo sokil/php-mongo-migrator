@@ -4,7 +4,7 @@ namespace Sokil\Mongo\Migrator\Console\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class Status extends \Sokil\Mongo\Migrator\Console\Command
 {
@@ -15,7 +15,7 @@ class Status extends \Sokil\Mongo\Migrator\Console\Command
             ->setDescription('Show status of migrations')
             ->addOption(
                 '--environment', '-e',
-                InputArgument::OPTIONAL, 
+                InputOption::VALUE_OPTIONAL, 
                 'Environment name'
             )
             ->setHelp('Show list of migrations with status of applying');

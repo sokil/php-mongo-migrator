@@ -5,6 +5,8 @@ namespace Sokil\Mongo\Migrator\Console;
 use Sokil\Mongo\Migrator\Config;
 use Sokil\Mongo\Migrator\Console\Exception\ConfigurationNotFound;
 
+use Symfony\Component\Yaml\Yaml;
+
 abstract class Command extends \Symfony\Component\Console\Command\Command
 {
     private $_config;

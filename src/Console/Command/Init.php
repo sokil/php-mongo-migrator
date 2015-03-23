@@ -2,10 +2,9 @@
 
 namespace Sokil\Mongo\Migrator\Console\Command;
 
-use Sokil\Mongo\Migrator\Console\Exception\ConfigurationNotFound;
-
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use \Symfony\Component\Console\Input\InputOption;
 
 class Init extends \Sokil\Mongo\Migrator\Console\Command
 {
@@ -19,7 +18,7 @@ class Init extends \Sokil\Mongo\Migrator\Console\Command
             ->setHelp('Create migrations project')
             ->addOption(
                 '--configFormat', '-f',
-                InputArgument::OPTIONAL,
+                InputOption::VALUE_OPTIONAL,
                 'Format of config (use one of "' . implode('","', $this->allowedConfigFormats) . '")',
                 'yaml'
             );
@@ -43,7 +42,7 @@ class Init extends \Sokil\Mongo\Migrator\Console\Command
         }
         
         // copy config to target path
-        $configPatternPath = __DIR__ . '/../../../' . self::CONFIG_FILENAME . '.' . $configFormat;
+        $configPatternPath = __DIR__ . '/../../../templates/' . self::CONFIG_FILENAME . '.' . $configFormat;
         if(!copy($configPatternPath, $configPath)) {
             throw new \Exception('Can\'t write config to target directory <info>' . $configPath . '</info>');
         }

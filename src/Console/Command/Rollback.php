@@ -3,7 +3,6 @@
 namespace Sokil\Mongo\Migrator\Console\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -18,12 +17,12 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
             ->setDescription('Rollback to specific version of database')
             ->addOption(
                 '--revision', '-r',
-                InputArgument::OPTIONAL,
+                InputOption::VALUE_OPTIONAL,
                 'Revision of migration'
             )
             ->addOption(
                 '--environment', '-e',
-                InputArgument::OPTIONAL, 
+                InputOption::VALUE_OPTIONAL, 
                 'Environment name'
             )
             ->setHelp('Rollback to specific revision of database');
