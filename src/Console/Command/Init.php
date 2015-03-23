@@ -51,7 +51,7 @@ class Init extends \Sokil\Mongo\Migrator\Console\Command
         $output->writeln('Project config "mongo-migrator.yaml" created at <info>' . $configPath . '</info>');
         
         // create migrations dir
-        $migrationsDirectory = $this->getConfig()->getMigrationsDir();
+        $migrationsDirectory = $this->getManager()->getMigrationsDir();
         
         if(!file_exists($migrationsDirectory)) {            
             if(!mkdir($migrationsDirectory, 0755, true)) {

@@ -18,17 +18,16 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     
     public function setUp()
     {
-        $configFile = __DIR__ . '/' . \Sokil\Mongo\Migrator\Console\Command::CONFIG_FILENAME . '.yaml';
         try {
+            $configFile = __DIR__ . '/' . \Sokil\Mongo\Migrator\Console\Command::CONFIG_FILENAME . '.yaml';
             $config = new Config(Yaml::parse($configFile));
-        } catch (\Exception $ex) {
-            var_export($ex);
-
+            $this->_manager = new ManagerMock($config, __DIR__);
+            $this->_manager->resetCollection('staging');
+        } catch (\Exception $e) {
+            var_export($e);
+            throw $e;
         }
         
-        $this->_manager = new ManagerMock($config);
-        
-        $this->_manager->resetCollection('staging');
     }
     
     public function tearDown()

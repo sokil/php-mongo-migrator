@@ -14,6 +14,8 @@ class Manager
      */
     private $_config;
     
+    private $rootDir;
+    
     /**
      *
      * @var \Sokil\Mongo\Client
@@ -34,9 +36,11 @@ class Manager
      */
     private $_eventDispatcher;
     
-    public function __construct(Config $config)
+    public function __construct(Config $config, $rootDir)
     {
         $this->_config = $config;
+        
+        $this->rootDir = $rootDir;
         
         $this->_eventDispatcher = new EventDispatcher;
     }
@@ -56,10 +60,20 @@ class Manager
         return $this->_client[$environment];
     }
     
+    public function getMigrationsDir()
+    {
+        $migrationsDir = $this->_config->getMigrationsDir();
+        if($migrationsDir[0] === '/') {
+            return $migrationsDir;
+        }
+        
+        return $this->rootDir . '/' . rtrim($migrationsDir, '/');
+    }
+    
     public function getAvailableRevisions()
     {
         $list = array();
-        foreach(new \DirectoryIterator($this->_config->getMigrationsDir()) as $file) {
+        foreach(new \DirectoryIterator($this->getMigrationsDir()) as $file) {
             if(!$file->isFile()) {
                 continue;
             }
@@ -176,7 +190,7 @@ class Manager
                 
                 $this->_eventDispatcher->dispatch('before_migrate_revision', $event);
 
-                require_once $this->_config->getMigrationsDir() . '/' . $revision->getFilename();
+                require_once $this->getMigrationsDir() . '/' . $revision->getFilename();
                 $className = $revision->getName();
                 
                 $migration = new $className($this->getClient($environment));
@@ -218,7 +232,7 @@ class Manager
                 
                 $this->_eventDispatcher->dispatch('before_rollback_revision', $event);
 
-                require_once $this->_config->getMigrationsDir() . '/' . $revision->getFilename();
+                require_once $this->getMigrationsDir() . '/' . $revision->getFilename();
                 $className = $revision->getName();
                 
                 $migration = new $className($this->getClient($environment));

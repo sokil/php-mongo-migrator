@@ -71,7 +71,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     public function getManager()
     {
         if(!$this->_manager) {
-            $this->_manager = new \Sokil\Mongo\Migrator\Manager($this->getConfig());
+            $this->_manager = new \Sokil\Mongo\Migrator\Manager($this->getConfig(), $this->getProjectRoot());
         }
         
         return $this->_manager;

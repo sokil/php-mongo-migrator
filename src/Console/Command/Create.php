@@ -33,7 +33,7 @@ class Create extends \Sokil\Mongo\Migrator\Console\Command
         }
         
         $migrationFilename = date('YmdHis') . '_' . $className . '.php';
-        $migrationFiledir = $this->getConfig()->getMigrationsDir();
+        $migrationFiledir = $this->getManager()->getMigrationsDir();
         $migrationFilepath =  $migrationFiledir . '/' . $migrationFilename;
         
         if(file_exists($migrationFilepath)) {

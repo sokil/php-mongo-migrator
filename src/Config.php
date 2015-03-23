@@ -2,8 +2,6 @@
 
 namespace Sokil\Mongo\Migrator;
 
-use Symfony\Component\Yaml\Yaml;
-
 class Config
 {
     private $_config;
@@ -39,12 +37,7 @@ class Config
     
     public function getMigrationsDir()
     {
-        $migrationsDir = $this->_config['path']['migrations'];
-        if($migrationsDir[0] === '/') {
-            return $migrationsDir;
-        }
-        
-        return getcwd() . '/' . rtrim($migrationsDir, '/');
+        return rtrim($this->_config['path']['migrations'], '/');
     }
     
     public function getDefaultEnvironment()
