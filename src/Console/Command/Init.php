@@ -2,33 +2,48 @@
 
 namespace Sokil\Mongo\Migrator\Console\Command;
 
+use Sokil\Mongo\Migrator\Console\Exception\ConfigurationNotFound;
+
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Init extends \Sokil\Mongo\Migrator\Console\Command
 {
+   private $allowedConfigFormats = array('yaml', 'php');
+   
     protected function configure()
     {
         $this
             ->setName('init')
             ->setDescription('Initialize migrations project')
-            ->setHelp('Create migrations project');
+            ->setHelp('Create migrations project')
+            ->addOption(
+                '--configFormat', '-f',
+                InputArgument::OPTIONAL,
+                'Format of config (use one of "' . implode('","', $this->allowedConfigFormats) . '")',
+                'yaml'
+            );
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
-    {        
-        $configPath = $this->getConfigPath();
-        if(file_exists($configPath)) {
+    {
+        if($this->isProjectInitialisd()) {
             throw new \Exception('Migration project already initialised');
         }
         
         // check permissions
-        if(!is_writable(dirname($configPath))) {
+        $configPath = $this->getProjectRoot();
+        if(!is_writable($this->getProjectRoot())) {
             throw new \Exception('Directory ' . $configPath . ' must be writeabe');
         }
         
+        $configFormat = $input->getOption('configFormat');
+        if(!in_array($configFormat, $this->allowedConfigFormats)) {
+            throw new \Exception('Config format "' . $configFormat . '" not allowed');
+        }
+        
         // copy config to target path
-        $configPatternPath = __DIR__ . '/../../../' . self::CONFIG_FILENAME;
+        $configPatternPath = __DIR__ . '/../../../' . self::CONFIG_FILENAME . '.' . $configFormat;
         if(!copy($configPatternPath, $configPath)) {
             throw new \Exception('Can\'t write config to target directory <info>' . $configPath . '</info>');
         }

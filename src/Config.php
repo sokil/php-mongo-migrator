@@ -7,14 +7,10 @@ use Symfony\Component\Yaml\Yaml;
 class Config
 {
     private $_config;
-    
-    private $_configFilePath;
 
-    public function __construct($path)
-    {
-        $this->_configFilePath = rtrim($path, '/');
-        
-        $this->_config = Yaml::parse($path);
+    public function __construct(array $config)
+    {        
+        $this->_config = $config;
     }
     
     public function __get($name)
@@ -43,7 +39,7 @@ class Config
     
     public function getMigrationsDir()
     {
-        return dirname($this->_configFilePath) . '/' . trim($this->_config['path']['migrations'], '/');
+        return getcwd() . '/' . trim($this->_config['path']['migrations'], '/');
     }
     
     public function getDefaultEnvironment()

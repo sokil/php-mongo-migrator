@@ -2,6 +2,8 @@
 
 namespace Sokil\Mongo\Migrator;
 
+use Symfony\Component\Yaml\Yaml;
+
 class ManagerMock extends \Sokil\Mongo\Migrator\Manager
 {
     public function resetCollection($environment)
@@ -16,8 +18,13 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     
     public function setUp()
     {
-        $configFile = __DIR__ . '/' . \Sokil\Mongo\Migrator\Console\Command::CONFIG_FILENAME;
-        $config = new Config($configFile);
+        $configFile = __DIR__ . '/' . \Sokil\Mongo\Migrator\Console\Command::CONFIG_FILENAME . '.yaml';
+        try {
+            $config = new Config(Yaml::parse($configFile));
+        } catch (\Exception $ex) {
+            var_export($ex);
+
+        }
         
         $this->_manager = new ManagerMock($config);
         

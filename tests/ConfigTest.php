@@ -2,14 +2,16 @@
 
 namespace Sokil\Mongo\Migrator;
 
+use Symfony\Component\Yaml\Yaml;
+
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     protected $_config;
     
     public function setUp()
     {
-        $configFile = __DIR__ . '/' . \Sokil\Mongo\Migrator\Console\Command::CONFIG_FILENAME;
-        $this->_config = new Config($configFile);
+        $configFile = __DIR__ . '/' . \Sokil\Mongo\Migrator\Console\Command::CONFIG_FILENAME . '.yaml';
+        $this->_config = new Config(Yaml::parse($configFile));
     }
     
     public function testGet()

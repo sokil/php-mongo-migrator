@@ -3,6 +3,7 @@
 namespace Sokil\Mongo\Migrator\Console;
 
 use Sokil\Mongo\Migrator\Config;
+use Sokil\Mongo\Migrator\Console\Exception\ConfigurationNotFound;
 
 abstract class Command extends \Symfony\Component\Console\Command\Command
 {
@@ -14,7 +15,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      */
     private $_manager;
     
-    const CONFIG_FILENAME = 'mongo-migrator.yaml';
+    const CONFIG_FILENAME = 'mongo-migrator';
     
     /**
      * 
@@ -23,15 +24,42 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     protected function getConfig()
     {
         if(!$this->_config) {
-            $this->_config = new Config($this->getConfigPath());
+            $this->_config = new Config($this->readConfig());
         }
         
         return $this->_config;
     }
     
-    public function getConfigPath()
+    private function readConfig()
     {
-        return getcwd() . '/' . self::CONFIG_FILENAME;
+        $filename = $this->getProjectRoot() . '/' . self::CONFIG_FILENAME;
+
+        $yamlFilename = $filename . '.yaml';
+        if(file_exists($yamlFilename)) {
+            return Yaml::parse($yamlFilename);
+        }
+
+        $phpFilename = $filename . '.php';
+        if(file_exists($phpFilename)) {
+            return require($phpFilename);
+        }
+        
+        throw new ConfigurationNotFound('Config not found');
+    }
+    
+    public function isProjectInitialisd()
+    {
+        try {
+            $config = $this->getConfig();
+            return (bool) $config;
+        } catch (ConfigurationNotFound $e) {
+            return false;
+        }
+    }
+    
+    public function getProjectRoot()
+    {
+        return getcwd();
     }
     
     /**
