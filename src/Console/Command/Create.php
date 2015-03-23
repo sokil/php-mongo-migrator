@@ -54,6 +54,6 @@ class Create extends \Sokil\Mongo\Migrator\Console\Command
         file_put_contents($migrationFilepath, $migrationFileContent);
         
         // show result
-        $output->writeln('New migration creted at ' . $migrationFilepath);
+        $output->writeln('New migration created at ' . $migrationFilepath);
     }
 }
