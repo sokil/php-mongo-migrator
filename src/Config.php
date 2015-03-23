@@ -39,7 +39,12 @@ class Config
     
     public function getMigrationsDir()
     {
-        return getcwd() . '/' . trim($this->_config['path']['migrations'], '/');
+        $migrationsDir = $this->_config['path']['migrations'];
+        if($migrationsDir[0] === '/') {
+            return $migrationsDir;
+        }
+        
+        return getcwd() . '/' . rtrim($migrationsDir, '/');
     }
     
     public function getDefaultEnvironment()
