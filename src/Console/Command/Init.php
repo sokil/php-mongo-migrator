@@ -43,7 +43,7 @@ class Init extends \Sokil\Mongo\Migrator\Console\Command
         
         // copy config to target path
         $configPatternPath = __DIR__ . '/../../../templates/' . self::CONFIG_FILENAME . '.' . $configFormat;
-        $targetConfigPath = $configPath . self::CONFIG_FILENAME . '.' . $configFormat;
+        $targetConfigPath = $configPath . '/' . self::CONFIG_FILENAME . '.' . $configFormat;
         if(!copy($configPatternPath, $targetConfigPath)) {
             throw new \Exception('Can\'t write config to target directory <info>' . $configPath . '</info>');
         }
