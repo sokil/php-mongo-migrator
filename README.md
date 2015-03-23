@@ -39,11 +39,15 @@ vendor/bin/mongo-migrator init
 ```
 
 This creates config file mongo-migrator.yaml and directory "./migrations", where migrations placed.
+Also you can use php config instead of yaml. Just initialise your project with php config format:
+```
+vendor/bin/mongo-migrator init --configFormat=php
+```
 
 Configuration
 -------------
 
-Conviguration file placed in file "./mongo-migrator.yaml".
+YAML configuration file placed in file "./mongo-migrator.yaml". PHP has same structure.
 
 ```yaml
 default_environment: development
