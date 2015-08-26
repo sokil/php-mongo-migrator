@@ -52,7 +52,7 @@ class Manager
     private function getClient($environment)
     {
         if(empty($this->_client[$environment])) {
-            $this->_client[$environment] = new \Sokil\Mongo\Client($this->_config->getDsn($environment));
+            $this->_client[$environment] = new \Sokil\Mongo\Client($this->_config->getDsn($environment), $this->_config->getOptions($environment));
             
             $this->_client[$environment]->useDatabase($this->_config->getDefaultDatabaseName($environment));
         }
