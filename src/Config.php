@@ -63,6 +63,15 @@ class Config
         return $this->_config['environments'][$environment]['dsn'];
     }
     
+    public function getOptions($environment = null)
+    {
+        if(!$environment) {
+            $environment = $this->getDefaultEnvironment();
+        }
+        
+        return isset($this->_config['environments'][$environment]['options']) ? $this->_config['environments'][$environment]['options'] : [];
+    }
+    
     public function getLogDatabaseName($environment = null)
     {
         if(!$environment) {
