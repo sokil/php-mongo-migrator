@@ -69,8 +69,8 @@ class Config
             $environment = $this->getDefaultEnvironment();
         }
 
-        return isset($this->_config['environments'][$environment]['options'])
-            ? $this->_config['environments'][$environment]['options']
+        return isset($this->_config['environments'][$environment]['connectOptions'])
+            ? $this->_config['environments'][$environment]['connectOptions']
             : array();
     }
 
