@@ -95,6 +95,8 @@ Every environment has this parameters:
 
 * environments.*.dsn - DSN which used to connect to mongo server
 
+* environments.*.connectOptions - options of MongoClient, described in [\MongoClient PHP manual](http://php.net/manual/ru/mongoclient.construct.php)
+
 * environments.*.default_database - databse, used if no database specified id migration script
 
 * environments.*.log_database - database, used to store migration log
