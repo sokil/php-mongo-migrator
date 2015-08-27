@@ -28,6 +28,11 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     {        
         $this->assertEquals('mongodb://localhost', $this->_config->getDsn('development'));
     }
+
+    public function testGetConnectOptions()
+    {
+        $this->assertEquals(array('replicaSet' => 'testrs'), $this->_config->getConnectOptions('development'));
+    }
     
     public function testGetLogDatabaseName()
     {        

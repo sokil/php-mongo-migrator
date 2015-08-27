@@ -4,6 +4,7 @@ namespace Sokil\Mongo\Migrator;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
+use Sokil\Mongo\Client;
 use Sokil\Mongo\Migrator\Event\ApplyRevisionEvent;
 
 class Manager
@@ -52,7 +53,10 @@ class Manager
     private function getClient($environment)
     {
         if(empty($this->_client[$environment])) {
-            $this->_client[$environment] = new \Sokil\Mongo\Client($this->_config->getDsn($environment));
+            $this->_client[$environment] = new Client(
+                $this->_config->getDsn($environment),
+                $this->_config->getConnectOptions($environment)
+            );
             
             $this->_client[$environment]->useDatabase($this->_config->getDefaultDatabaseName($environment));
         }
