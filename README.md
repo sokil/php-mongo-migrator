@@ -29,6 +29,32 @@ Installation through composer:
 
 After installation you will be able to run commands in console by running ./vendor/bin/mongo-migrator command.
 
+```
+pc:~/php-mongo-migrator$ ./bin/mongo-migrator 
+Console Tool
+
+Usage:
+  command [options] [arguments]
+
+Options:
+  -h, --help            Display this help message
+  -q, --quiet           Do not output any message
+  -V, --version         Display this application version
+      --ansi            Force ANSI output
+      --no-ansi         Disable ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Available commands:
+  create    Create new migration
+  help      Displays help for a command
+  init      Initialize migrations project
+  list      Lists commands
+  migrate   Migrate to specific revision of database
+  rollback  Rollback to specific version of database
+  status    Show status of migrations
+```
+
 Initialising migrations
 -----------------------
 
@@ -105,14 +131,21 @@ Every environment has this parameters:
 
 Creating new revision
 ---------------------
-Now you can create your initial migration script. Creating new revison:
+Now you can create your migration script. Creating new revison:
 ```
 vendor/bin/mongo-migrator create revision_name
 ```
 
 Name of revision must be in camel case format. For example run ```vendor/bin/mongo-migrator create RevisionName```. 
-This creates migration script like 20140607132630_RevisionName.php, where "20140607132630"
-is revision id and "RevisionName" is revision name. Class source is:
+This creates migration script like 20151127093706_RevisionName.php, where "20151127093706"
+is revision id and "RevisionName" is revision name. 
+
+```
+pc:~/php-mongo-migrator$ ./bin/mongo-migrator create RevisionName
+New migration created at ~/php-mongo-migrator/migrations/20151127093706_RevisionName.php
+```
+
+Class source is:
 
 ```php
 <?php
