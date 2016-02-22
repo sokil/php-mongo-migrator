@@ -1,7 +1,7 @@
 PHPMongo Migrator
 ==================
 
-Migrations for MongoDb.
+Migrations for MongoDb based on [PHPMongo](https://github.com/sokil/php-mongo)
 
 [![Build Status](https://travis-ci.org/sokil/php-mongo-migrator.png?branch=master&1)](https://travis-ci.org/sokil/php-mongo-migrator)
 [![Latest Stable Version](https://poser.pugx.org/sokil/php-mongo-migrator/v/stable.png)](https://packagist.org/packages/sokil/php-mongo-migrator)
