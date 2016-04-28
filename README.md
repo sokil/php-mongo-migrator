@@ -216,6 +216,11 @@ found in https://github.com/sokil/php-mongo.
 
 class RevisionName extends \Sokil\Mongo\Migrator\AbstractMigration
 {
+    protected function init() 
+    {
+        // some common code
+    }
+    
     public function up()
     {
         $collection = $this
