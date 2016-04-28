@@ -2,19 +2,30 @@
 
 namespace Sokil\Mongo\Migrator;
 
+use Sokil\Mongo\Client;
+
 abstract class AbstractMigration
 {
     /**
      *
-     * @var \Sokil\Mongo\Client
+     * @var Client
      */
-    private $_client;
+    private $client;
+
+    private $environment;
     
-    public function __construct(\Sokil\Mongo\Client $client)
-    {
-        $this->_client = $client;
-        return $this;
+    public function __construct(
+        Client $client
+    ) {
+        $this->client = $client;
+
+        $this->init();
     }
+
+    /**
+     * Do some job before migrating up or down
+     */
+    protected function init() {}
     
     /**
      * 
@@ -23,7 +34,7 @@ abstract class AbstractMigration
      */
     protected function getDatabase($name = null)
     {
-        return $this->_client->getDatabase($name);
+        return $this->client->getDatabase($name);
     }
     
     /**
@@ -33,7 +44,29 @@ abstract class AbstractMigration
      */
     protected function getCollection($name)
     {
-        return $this->_client->getCollection($name);
+        return $this->client->getCollection($name);
+    }
+
+    /**
+     * Define environment of migration to run in
+     *
+     * @param $environment
+     * @return $this
+     */
+    public function setEnvironment($environment)
+    {
+        $this->environment = $environment;
+        return $this;
+    }
+
+    /**
+     * Get environment of running migration
+     *
+     * @return mixed
+     */
+    protected function getEnvironment()
+    {
+        return $this->environment;
     }
     
     public function up() {}

@@ -197,7 +197,12 @@ class Manager
                 require_once $this->getMigrationsDir() . '/' . $revision->getFilename();
                 $className = $revision->getName();
                 
-                $migration = new $className($this->getClient($environment));
+                $migration = new $className(
+                    $this->getClient($environment)
+                );
+
+                $migration->setEnvironment($environment);
+
                 $migration->up();
                 
                 $this->logUp($revision->getId(), $environment);
