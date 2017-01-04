@@ -3,45 +3,46 @@
 namespace Sokil\Mongo\Migrator;
 
 use Symfony\Component\Yaml\Yaml;
+use Sokil\Mongo\Migrator\Console\Command;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
-    protected $_config;
+    private $config;
     
     public function setUp()
     {
-        $configFile = __DIR__ . '/' . \Sokil\Mongo\Migrator\Console\Command::CONFIG_FILENAME . '.yaml';
-        $this->_config = new Config(Yaml::parse($configFile));
+        $configFile = __DIR__ . '/' . Command::CONFIG_FILENAME . '.yaml';
+        $this->config = new Config(Yaml::parse(file_get_contents($configFile)));
     }
     
     public function testGet()
     {
-        $this->assertEquals('migrations', $this->_config->get('path.migrations'));
+        $this->assertEquals('migrations', $this->config->get('path.migrations'));
     }
     
     public function testGetDefaultDatabaseName()
     {        
-        $this->assertEquals('test', $this->_config->getDefaultDatabaseName('development'));
+        $this->assertEquals('test', $this->config->getDefaultDatabaseName('development'));
     }
     
     public function testGetDsn()
     {        
-        $this->assertEquals('mongodb://localhost', $this->_config->getDsn('development'));
+        $this->assertEquals('mongodb://localhost', $this->config->getDsn('development'));
     }
 
     public function testGetConnectOptions()
     {
-        $this->assertEquals(array('replicaSet' => 'testrs'), $this->_config->getConnectOptions('development'));
-        $this->assertEquals(array(), $this->_config->getConnectOptions('staging'));
+        $this->assertEquals(array('replicaSet' => 'testrs'), $this->config->getConnectOptions('development'));
+        $this->assertEquals(array(), $this->config->getConnectOptions('staging'));
     }
     
     public function testGetLogDatabaseName()
     {        
-        $this->assertEquals('test', $this->_config->getLogDatabaseName('development'));
+        $this->assertEquals('test', $this->config->getLogDatabaseName('development'));
     }
     
     public function testGetLogCollectionName()
     {        
-        $this->assertEquals('migrations', $this->_config->getLogCollectionName('development'));
+        $this->assertEquals('migrations', $this->config->getLogCollectionName('development'));
     }
 }

@@ -3,7 +3,6 @@
 namespace Sokil\Mongo\Migrator;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
-
 use Sokil\Mongo\Client;
 use Sokil\Mongo\Migrator\Event\ApplyRevisionEvent;
 
@@ -13,7 +12,7 @@ class Manager
      *
      * @var \Sokil\Mongo\Migrator\Config
      */
-    private $_config;
+    private $config;
     
     private $rootDir;
     
@@ -21,52 +20,50 @@ class Manager
      *
      * @var \Sokil\Mongo\Client
      */
-    private $_client;
+    private $client;
     
     /**
      *
      * @var \Sokil\Mongo\Collection
      */
-    private $_logCollection;
+    private $logCollection;
     
-    private $_appliedRevisions = array();
+    private $appliedRevisions = array();
     
     /**
      *
      * @var \Symfony\Component\EventDispatcher\EventDispatcher
      */
-    private $_eventDispatcher;
+    private $eventDispatcher;
     
     public function __construct(Config $config, $rootDir)
     {
-        $this->_config = $config;
-        
+        $this->config = $config;
         $this->rootDir = $rootDir;
-        
-        $this->_eventDispatcher = new EventDispatcher;
+        $this->eventDispatcher = new EventDispatcher;
     }
     
     /**
-     * 
+     * @param string $environment
      * @return \Sokil\Mongo\Client
      */
     private function getClient($environment)
     {
-        if(empty($this->_client[$environment])) {
-            $this->_client[$environment] = new Client(
-                $this->_config->getDsn($environment),
-                $this->_config->getConnectOptions($environment)
+        if (empty($this->client[$environment])) {
+            $this->client[$environment] = new Client(
+                $this->config->getDsn($environment),
+                $this->config->getConnectOptions($environment)
             );
             
-            $this->_client[$environment]->useDatabase($this->_config->getDefaultDatabaseName($environment));
+            $this->client[$environment]->useDatabase($this->config->getDefaultDatabaseName($environment));
         }
         
-        return $this->_client[$environment];
+        return $this->client[$environment];
     }
     
     public function getMigrationsDir()
     {
-        $migrationsDir = $this->_config->getMigrationsDir();
+        $migrationsDir = $this->config->getMigrationsDir();
         if($migrationsDir[0] === '/') {
             return $migrationsDir;
         }
@@ -100,19 +97,19 @@ class Manager
     
     protected function getLogCollection($environment)
     {
-        if($this->_logCollection) {
-            return $this->_logCollection;
+        if($this->logCollection) {
+            return $this->logCollection;
         }
         
-        $databaseName = $this->_config->getLogDatabaseName($environment);
-        $collectionName = $this->_config->getLogCollectionName($environment);
+        $databaseName = $this->config->getLogDatabaseName($environment);
+        $collectionName = $this->config->getLogCollectionName($environment);
         
-        $this->_logCollection = $this
+        $this->logCollection = $this
             ->getClient($environment)
             ->getDatabase($databaseName)
             ->getCollection($collectionName);
         
-        return $this->_logCollection;
+        return $this->logCollection;
     }
     
     protected function logUp($revision, $environment)
@@ -135,8 +132,8 @@ class Manager
     
     public function getAppliedRevisions($environment)
     {
-        if(isset($this->_appliedRevisions[$environment])) {
-            return $this->_appliedRevisions[$environment];
+        if(isset($this->appliedRevisions[$environment])) {
+            return $this->appliedRevisions[$environment];
         }
         
         $documents = array_values($this
@@ -151,9 +148,9 @@ class Manager
             return array();
         }
         
-        $this->_appliedRevisions[$environment] = $documents;
+        $this->appliedRevisions[$environment] = $documents;
             
-        return $this->_appliedRevisions[$environment];
+        return $this->appliedRevisions[$environment];
     }
     
     public function isRevisionApplied($revision, $environment)
@@ -169,7 +166,7 @@ class Manager
     
     protected function executeMigration($targetRevision, $environment, $direction)
     {
-        $this->_eventDispatcher->dispatch('start');
+        $this->eventDispatcher->dispatch('start');
         
         // get last applied migration
         $latestRevisionId = $this->getLatestAppliedRevisionId($environment);
@@ -179,7 +176,7 @@ class Manager
         
         // execute
         if($direction === 1) {
-            $this->_eventDispatcher->dispatch('before_migrate');
+            $this->eventDispatcher->dispatch('before_migrate');
             
             ksort($availableRevisions);
 
@@ -192,7 +189,7 @@ class Manager
                 $event = new ApplyRevisionEvent();
                 $event->setRevision($revision);
                 
-                $this->_eventDispatcher->dispatch('before_migrate_revision', $event);
+                $this->eventDispatcher->dispatch('before_migrate_revision', $event);
 
                 require_once $this->getMigrationsDir() . '/' . $revision->getFilename();
                 $className = $revision->getName();
@@ -207,17 +204,17 @@ class Manager
                 
                 $this->logUp($revision->getId(), $environment);
                 
-                $this->_eventDispatcher->dispatch('migrate_revision', $event);
+                $this->eventDispatcher->dispatch('migrate_revision', $event);
                 
                 if($targetRevision && in_array($targetRevision, array($revision->getId(), $revision->getName()))) {
                     break;
                 }
             }
             
-            $this->_eventDispatcher->dispatch('migrate');
+            $this->eventDispatcher->dispatch('migrate');
         } else {
             
-            $this->_eventDispatcher->dispatch('before_rollback');
+            $this->eventDispatcher->dispatch('before_rollback');
             
             // check if nothing to revert
             if(!$latestRevisionId) {
@@ -239,7 +236,7 @@ class Manager
                 $event = new ApplyRevisionEvent();
                 $event->setRevision($revision);
                 
-                $this->_eventDispatcher->dispatch('before_rollback_revision', $event);
+                $this->eventDispatcher->dispatch('before_rollback_revision', $event);
 
                 require_once $this->getMigrationsDir() . '/' . $revision->getFilename();
                 $className = $revision->getName();
@@ -249,20 +246,20 @@ class Manager
                 
                 $this->logDown($revision->getId(), $environment);
                 
-                $this->_eventDispatcher->dispatch('rollback_revision', $event);
+                $this->eventDispatcher->dispatch('rollback_revision', $event);
                 
                 if(!$targetRevision) {
                     break;
                 }
             }
             
-            $this->_eventDispatcher->dispatch('rollback');
+            $this->eventDispatcher->dispatch('rollback');
         }
         
-        $this->_eventDispatcher->dispatch('stop');
+        $this->eventDispatcher->dispatch('stop');
         
         // clear cached applied revisions
-        unset($this->_appliedRevisions[$environment]);
+        unset($this->appliedRevisions[$environment]);
     }
     
     public function migrate($revision, $environment)
@@ -279,61 +276,61 @@ class Manager
 
     public function onStart($listener)
     {
-        $this->_eventDispatcher->addListener('start', $listener);
+        $this->eventDispatcher->addListener('start', $listener);
         return $this;
     }
     
     public function onBeforeMigrate($listener)
     {
-        $this->_eventDispatcher->addListener('before_migrate', $listener);
+        $this->eventDispatcher->addListener('before_migrate', $listener);
         return $this;
     }
     
     public function onBeforeMigrateRevision($listener)
     {
-        $this->_eventDispatcher->addListener('before_migrate_revision', $listener);
+        $this->eventDispatcher->addListener('before_migrate_revision', $listener);
         return $this;
     }
     
     public function onMigrateRevision($listener)
     {
-        $this->_eventDispatcher->addListener('migrate_revision', $listener);
+        $this->eventDispatcher->addListener('migrate_revision', $listener);
         return $this;
     }
     
     public function onMigrate($listener)
     {
-        $this->_eventDispatcher->addListener('migrate', $listener);
+        $this->eventDispatcher->addListener('migrate', $listener);
         return $this;
     }
     
     public function onBeforeRollback($listener)
     {
-        $this->_eventDispatcher->addListener('before_rollback', $listener);
+        $this->eventDispatcher->addListener('before_rollback', $listener);
         return $this;
     }
     
     public function onBeforeRollbackRevision($listener)
     {
-        $this->_eventDispatcher->addListener('before_rollback_revision', $listener);
+        $this->eventDispatcher->addListener('before_rollback_revision', $listener);
         return $this;
     }
     
     public function onRollbackRevision($listener)
     {
-        $this->_eventDispatcher->addListener('rollback_revision', $listener);
+        $this->eventDispatcher->addListener('rollback_revision', $listener);
         return $this;
     }
     
     public function onRollback($listener)
     {
-        $this->_eventDispatcher->addListener('rollback', $listener);
+        $this->eventDispatcher->addListener('rollback', $listener);
         return $this;
     }
     
     public function onStop($listener)
     {
-        $this->_eventDispatcher->addListener('stop', $listener);
+        $this->eventDispatcher->addListener('stop', $listener);
         return $this;
     }
 }
