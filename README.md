@@ -1,5 +1,6 @@
 PHPMongo Migrator
 ==================
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/sokil/php-mongo-migrator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Migrations for MongoDB based on [PHPMongo ODM](https://github.com/sokil/php-mongo)
 
