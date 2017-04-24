@@ -19,7 +19,7 @@ class ApplyRevisionEvent extends \Symfony\Component\EventDispatcher\Event
     }
     
     /**
-     * 
+     *
      * @return \Sokil\Mongo\Migrator\Revision
      */
     public function getRevision()

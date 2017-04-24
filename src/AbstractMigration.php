@@ -25,10 +25,12 @@ abstract class AbstractMigration
     /**
      * Do some job before migrating up or down
      */
-    protected function init() {}
+    protected function init()
+    {
+    }
     
     /**
-     * 
+     *
      * @param string $name
      * @return \Sokil\Mongo\Database
      */
@@ -38,7 +40,7 @@ abstract class AbstractMigration
     }
     
     /**
-     * 
+     *
      * @param string $name
      * @return \Sokil\Mongo\Collection
      */
@@ -69,7 +71,11 @@ abstract class AbstractMigration
         return $this->environment;
     }
     
-    public function up() {}
+    public function up()
+    {
+    }
     
-    public function down() {}
+    public function down()
+    {
+    }
 }

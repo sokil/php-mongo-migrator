@@ -64,7 +64,7 @@ class Manager
     public function getMigrationsDir()
     {
         $migrationsDir = $this->config->getMigrationsDir();
-        if($migrationsDir[0] === '/') {
+        if ($migrationsDir[0] === '/') {
             return $migrationsDir;
         }
         
@@ -77,8 +77,8 @@ class Manager
     public function getAvailableRevisions()
     {
         $list = array();
-        foreach(new \DirectoryIterator($this->getMigrationsDir()) as $file) {
-            if(!$file->isFile()) {
+        foreach (new \DirectoryIterator($this->getMigrationsDir()) as $file) {
+            if (!$file->isFile()) {
                 continue;
             }
             
@@ -100,7 +100,7 @@ class Manager
     
     protected function getLogCollection($environment)
     {
-        if($this->logCollection) {
+        if ($this->logCollection) {
             return $this->logCollection;
         }
         
@@ -119,7 +119,7 @@ class Manager
     {
         $this->getLogCollection($environment)->createDocument(array(
             'revision'  => $revision,
-            'date'      => new \MongoDate, 
+            'date'      => new \MongoDate,
         ))->save();
         
         return $this;
@@ -135,7 +135,7 @@ class Manager
     
     public function getAppliedRevisions($environment)
     {
-        if(isset($this->appliedRevisions[$environment])) {
+        if (isset($this->appliedRevisions[$environment])) {
             return $this->appliedRevisions[$environment];
         }
         
@@ -143,11 +143,11 @@ class Manager
             ->getLogCollection($environment)
             ->find()
             ->sort(array('revision' => 1))
-            ->map(function($document) {
+            ->map(function ($document) {
                 return $document->revision;
             }));
             
-        if(!$documents) {
+        if (!$documents) {
             return array();
         }
         
@@ -178,14 +178,13 @@ class Manager
         $availableRevisions = $this->getAvailableRevisions();
         
         // execute
-        if($direction === 1) {
+        if ($direction === 1) {
             $this->eventDispatcher->dispatch('before_migrate');
             
             ksort($availableRevisions);
 
-            foreach($availableRevisions as $revision) {
-                
-                if($revision->getId() <= $latestRevisionId) {
+            foreach ($availableRevisions as $revision) {
+                if ($revision->getId() <= $latestRevisionId) {
                     continue;
                 }
                 
@@ -209,30 +208,28 @@ class Manager
                 
                 $this->eventDispatcher->dispatch('migrate_revision', $event);
                 
-                if($targetRevision && in_array($targetRevision, array($revision->getId(), $revision->getName()))) {
+                if ($targetRevision && in_array($targetRevision, array($revision->getId(), $revision->getName()))) {
                     break;
                 }
             }
             
             $this->eventDispatcher->dispatch('migrate');
         } else {
-            
             $this->eventDispatcher->dispatch('before_rollback');
             
             // check if nothing to revert
-            if(!$latestRevisionId) {
+            if (!$latestRevisionId) {
                 return;
             }
             
             krsort($availableRevisions);
 
-            foreach($availableRevisions as $revision) {
-
-                if($revision->getId() > $latestRevisionId) {
+            foreach ($availableRevisions as $revision) {
+                if ($revision->getId() > $latestRevisionId) {
                     continue;
                 }
                 
-                if($targetRevision && in_array($targetRevision, array($revision->getId(), $revision->getName()))) {
+                if ($targetRevision && in_array($targetRevision, array($revision->getId(), $revision->getName()))) {
                     break;
                 }
                 
@@ -251,7 +248,7 @@ class Manager
                 
                 $this->eventDispatcher->dispatch('rollback_revision', $event);
                 
-                if(!$targetRevision) {
+                if (!$targetRevision) {
                     break;
                 }
             }

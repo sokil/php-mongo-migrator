@@ -20,7 +20,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     const CONFIG_FILENAME = 'mongo-migrator';
     
     /**
-     * 
+     *
      * @return \Sokil\Mongo\Migrator\Config
      */
     protected function getConfig()
@@ -84,12 +84,12 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     }
     
     /**
-     * 
+     *
      * @return \Sokil\Mongo\Migrator\Manager
      */
     public function getManager()
     {
-        if(!$this->manager) {
+        if (!$this->manager) {
             $this->manager = new Manager($this->getConfig(), $this->getProjectRoot());
         }
         

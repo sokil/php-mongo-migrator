@@ -6,4 +6,3 @@ class ConfigurationNotFound extends \Exception
 {
     
 }
-

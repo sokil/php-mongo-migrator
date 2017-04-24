@@ -14,8 +14,8 @@ class Create extends \Sokil\Mongo\Migrator\Console\Command
             ->setName('create')
             ->setDescription('Create new migration')
             ->addArgument(
-                'name', 
-                InputArgument::REQUIRED, 
+                'name',
+                InputArgument::REQUIRED,
                 'Name of migration in CamelCase notation'
             )
             ->setHelp('Create new migration');
@@ -24,11 +24,11 @@ class Create extends \Sokil\Mongo\Migrator\Console\Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $className = $input->getArgument('name');
-        if(!$className) {
+        if (!$className) {
             throw new \Exception('Name not specified');
         }
         
-        if(!preg_match('/^([A-Z][a-z0-9]+)+$/', $className)) {
+        if (!preg_match('/^([A-Z][a-z0-9]+)+$/', $className)) {
             throw new \Exception('Name must be in CamelCase notation');
         }
         
@@ -36,18 +36,18 @@ class Create extends \Sokil\Mongo\Migrator\Console\Command
         $migrationFiledir = $this->getManager()->getMigrationsDir();
         $migrationFilepath =  $migrationFiledir . '/' . $migrationFilename;
         
-        if(file_exists($migrationFilepath)) {
+        if (file_exists($migrationFilepath)) {
             throw new \Exception('Migration file with same name already exists');
         }
         
-        if(!is_writeable(dirname($migrationFilepath))) {
+        if (!is_writeable(dirname($migrationFilepath))) {
             throw new \Exception('Permission denied for writting to ' . $migrationFilepath);
         }
         
-        // create migrations file 
+        // create migrations file
         $migrationFileContent = str_replace(
-            '{{MIGRATION_CLASSNAME}}', 
-            $className, 
+            '{{MIGRATION_CLASSNAME}}',
+            $className,
             file_get_contents(__DIR__ . '/../../MigrationTemplate.php.dist')
         );
         

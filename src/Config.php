@@ -7,7 +7,7 @@ class Config
     private $config;
 
     public function __construct(array $config)
-    {        
+    {
         $this->config = $config;
     }
     
@@ -18,14 +18,13 @@ class Config
     
     public function get($name)
     {
-        if(false === strpos($name, '.')) {
+        if (false === strpos($name, '.')) {
             return isset($this->config[$name]) ? $this->config[$name] : null;
         }
 
         $value = $this->config;
-        foreach(explode('.', $name) as $field)
-        {
-            if(!isset($value[$field])) {
+        foreach (explode('.', $name) as $field) {
+            if (!isset($value[$field])) {
                 return null;
             }
 
@@ -47,7 +46,7 @@ class Config
     
     public function getDefaultDatabaseName($environment = null)
     {
-        if(!$environment) {
+        if (!$environment) {
             $environment = $this->getDefaultEnvironment();
         }
         
@@ -56,7 +55,7 @@ class Config
     
     public function getDsn($environment = null)
     {
-        if(!$environment) {
+        if (!$environment) {
             $environment = $this->getDefaultEnvironment();
         }
         
@@ -65,7 +64,7 @@ class Config
     
     public function getConnectOptions($environment = null)
     {
-        if(!$environment) {
+        if (!$environment) {
             $environment = $this->getDefaultEnvironment();
         }
 
@@ -76,7 +75,7 @@ class Config
 
     public function getLogDatabaseName($environment = null)
     {
-        if(!$environment) {
+        if (!$environment) {
             $environment = $this->getDefaultEnvironment();
         }
         
@@ -85,7 +84,7 @@ class Config
     
     public function getLogCollectionName($environment = null)
     {
-        if(!$environment) {
+        if (!$environment) {
             $environment = $this->getDefaultEnvironment();
         }
         
