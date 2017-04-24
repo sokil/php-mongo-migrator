@@ -4,25 +4,25 @@ namespace Sokil\Mongo\Migrator;
 
 class Config
 {
-    private $_config;
+    private $config;
 
     public function __construct(array $config)
     {        
-        $this->_config = $config;
+        $this->config = $config;
     }
     
     public function __get($name)
     {
-        return isset($this->_config[$name]) ? $this->_config[$name] : null;
+        return isset($this->config[$name]) ? $this->config[$name] : null;
     }
     
     public function get($name)
     {
         if(false === strpos($name, '.')) {
-            return isset($this->_config[$name]) ? $this->_config[$name] : null;
+            return isset($this->config[$name]) ? $this->config[$name] : null;
         }
 
-        $value = $this->_config;
+        $value = $this->config;
         foreach(explode('.', $name) as $field)
         {
             if(!isset($value[$field])) {
@@ -37,12 +37,12 @@ class Config
     
     public function getMigrationsDir()
     {
-        return rtrim($this->_config['path']['migrations'], '/');
+        return rtrim($this->config['path']['migrations'], '/');
     }
     
     public function getDefaultEnvironment()
     {
-        return $this->_config['default_environment'];
+        return $this->config['default_environment'];
     }
     
     public function getDefaultDatabaseName($environment = null)
@@ -51,7 +51,7 @@ class Config
             $environment = $this->getDefaultEnvironment();
         }
         
-        return $this->_config['environments'][$environment]['default_database'];
+        return $this->config['environments'][$environment]['default_database'];
     }
     
     public function getDsn($environment = null)
@@ -60,7 +60,7 @@ class Config
             $environment = $this->getDefaultEnvironment();
         }
         
-        return $this->_config['environments'][$environment]['dsn'];
+        return $this->config['environments'][$environment]['dsn'];
     }
     
     public function getConnectOptions($environment = null)
@@ -69,8 +69,8 @@ class Config
             $environment = $this->getDefaultEnvironment();
         }
 
-        return isset($this->_config['environments'][$environment]['connectOptions'])
-            ? $this->_config['environments'][$environment]['connectOptions']
+        return isset($this->config['environments'][$environment]['connectOptions'])
+            ? $this->config['environments'][$environment]['connectOptions']
             : array();
     }
 
@@ -80,7 +80,7 @@ class Config
             $environment = $this->getDefaultEnvironment();
         }
         
-        return $this->_config['environments'][$environment]['log_database'];
+        return $this->config['environments'][$environment]['log_database'];
     }
     
     public function getLogCollectionName($environment = null)
@@ -89,6 +89,6 @@ class Config
             $environment = $this->getDefaultEnvironment();
         }
         
-        return $this->_config['environments'][$environment]['log_collection'];
+        return $this->config['environments'][$environment]['log_collection'];
     }
 }

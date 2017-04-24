@@ -4,42 +4,42 @@ namespace Sokil\Mongo\Migrator;
 
 class Revision
 {
-    private $_id;
+    private $id;
     
-    private $_name;
+    private $name;
     
-    private $_filename;
+    private $filename;
     
     public function setId($id)
     {
-        $this->_id = $id;
+        $this->id = $id;
         return $this;
     }
     
     public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
     
     public function setName($name)
     {
-        $this->_name = $name;
+        $this->name = $name;
         return $this;
     }
     
     public function getName()
     {
-        return $this->_name;
+        return $this->name;
     }
     
     public function setFilename($filename)
     {
-        $this->_filename = $filename;
+        $this->filename = $filename;
         return $this;
     }
     
     public function getFilename()
     {
-        return $this->_filename;
+        return $this->filename;
     }
 }

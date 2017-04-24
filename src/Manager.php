@@ -70,7 +70,10 @@ class Manager
         
         return $this->rootDir . '/' . rtrim($migrationsDir, '/');
     }
-    
+
+    /**
+     * @return Revision[]
+     */
     public function getAvailableRevisions()
     {
         $list = array();

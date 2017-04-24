@@ -10,11 +10,11 @@ class ApplyRevisionEvent extends \Symfony\Component\EventDispatcher\Event
      *
      * @var \Sokil\Mongo\Migrator\Revision
      */
-    private $_revision;
+    private $revision;
     
     public function setRevision(Revision $revision)
     {
-        $this->_revision = $revision;
+        $this->revision = $revision;
         return $this;
     }
     
@@ -24,6 +24,6 @@ class ApplyRevisionEvent extends \Symfony\Component\EventDispatcher\Event
      */
     public function getRevision()
     {
-        return $this->_revision;
+        return $this->revision;
     }
 }
