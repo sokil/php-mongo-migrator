@@ -12,20 +12,28 @@
     "require": {
         "php": ">=5.3 || ^7.0",
         "ext-mongo": ">=0.9.0",
-        "sokil/php-mongo": "1.*",
-        "symfony/console": ">=2.0",
-        "symfony/yaml": ">=2.0",
-        "symfony/event-dispatcher": ">=2.0"
-        
+        "sokil/php-mongo": "1.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "3.7.*",
-        "satooshi/php-coveralls": "0.7.*"
+        "phpunit/phpunit": ">=3.7.38 <6.0",
+        "satooshi/php-coveralls": ">=0.7.1 <2.0",
+        "squizlabs/php_codesniffer": "^2.3",
+        "symfony/console": ">=2.0 <4.0",
+        "symfony/yaml": ">=2.0 <4.0",
+        "symfony/event-dispatcher": ">=2.0 <4.0"
     },
     "autoload": {
         "psr-4": {
             "Sokil\\Mongo\\Migrator\\": "src"
         }
     },
-    "bin": ["bin/mongo-migrator"]
+    "bin": ["bin/mongo-migrator"],
+    "scripts": {
+        "test": "phpunit -c ./tests/phpunit.xml ./tests",
+        "dockertest": "./run-docker-tests.sh",
+        "cover": "phpunit -c ./tests/phpunit.xml --coverage-clover ./share/phpunit/clover.xml ./tests",
+        "coveralls": "coveralls -v",
+        "check-style": "phpcs -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src",
+        "fix-style": "phpcbf -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src"
+    }
 }
