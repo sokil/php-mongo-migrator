@@ -128,7 +128,7 @@ class Manager
     protected function logDown($revision, $environment)
     {
         $collection = $this->getLogCollection($environment);
-        $collection->deleteDocuments($collection->expression()->where('revision', $revision));
+        $collection->batchDelete($collection->expression()->where('revision', $revision));
         
         return $this;
     }
@@ -193,7 +193,9 @@ class Manager
                 
                 $this->eventDispatcher->dispatch('before_migrate_revision', $event);
 
-                require_once $this->getMigrationsDir() . '/' . $revision->getFilename();
+                $revisionPath = $this->getMigrationsDir() . '/' . $revision->getFilename();
+                require_once $revisionPath;
+
                 $className = $revision->getName();
                 
                 $migration = new $className(
@@ -238,7 +240,9 @@ class Manager
                 
                 $this->eventDispatcher->dispatch('before_rollback_revision', $event);
 
-                require_once $this->getMigrationsDir() . '/' . $revision->getFilename();
+                $revisionPath = $this->getMigrationsDir() . '/' . $revision->getFilename();
+                require_once $revisionPath;
+
                 $className = $revision->getName();
                 
                 $migration = new $className($this->getClient($environment));

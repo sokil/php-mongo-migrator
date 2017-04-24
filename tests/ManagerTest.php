@@ -5,16 +5,11 @@ namespace Sokil\Mongo\Migrator;
 use Symfony\Component\Yaml\Yaml;
 use Sokil\Mongo\Migrator\Console\Command;
 
-class ManagerMock extends \Sokil\Mongo\Migrator\Manager
-{
-    public function resetCollection($environment)
-    {
-        $this->getLogCollection($environment)->delete();
-    }
-}
-
 class ManagerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var ManagerMock
+     */
     private $manager;
     
     public function setUp()
@@ -98,5 +93,13 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         
         $this->assertFalse($this->manager->isRevisionApplied('20140531201025', 'staging'));
         $this->assertFalse($this->manager->isRevisionApplied('20140531201027', 'staging'));
+    }
+}
+
+class ManagerMock extends Manager
+{
+    public function resetCollection($environment)
+    {
+        $this->getLogCollection($environment)->delete();
     }
 }
