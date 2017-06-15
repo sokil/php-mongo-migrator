@@ -246,6 +246,7 @@ class Manager
                 $className = $revision->getName();
                 
                 $migration = new $className($this->getClient($environment));
+                $migration->setEnvironment($environment);
                 $migration->down();
                 
                 $this->logDown($revision->getId(), $environment);
