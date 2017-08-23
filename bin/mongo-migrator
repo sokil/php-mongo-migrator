@@ -1,8 +1,22 @@
 #!/usr/bin/env php
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+// find and load autoloader
+$autoloadPathList = [
+    // phar, global install, dev
+    __DIR__ . '/../vendor/autoload.php',
+    // install to vendor/bin
+    __DIR__ . '/../../../autoload.php'
+];
 
+foreach ($autoloadPathList as $autoloadPath) {
+    if (file_exists($autoloadPath)) {
+        require_once $autoloadPath;
+        break;
+    }
+}
+
+// start application
 $application = new \Sokil\Mongo\Migrator\Console\Application;
 $application->run();
 
