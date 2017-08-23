@@ -48,8 +48,8 @@ composer require "alcaeus/mongo-php-adapter" --ignore-platform-reqs
 Installation
 ------------
 
-Install locally through composer
-=============================
+### Install locally through composer
+
 
 ```php
 composer.phar require sokil/php-mongo-migrator
@@ -57,8 +57,7 @@ composer.phar require sokil/php-mongo-migrator
 
 After installation you will be able to run commands in console by running ./vendor/bin/mongo-migrator command.
 
-Install phar
-============
+### Install phar
 
 Run in shell:
 ```
