@@ -13,7 +13,8 @@
                 "*.php"
             ],
             "exclude": [
-                "tests"
+                "tests",
+                "Tests"
             ],
             "in": [
                 "vendor"
