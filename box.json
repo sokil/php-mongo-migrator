@@ -1,0 +1,29 @@
+{
+    "chmod": "0755",
+    "directories": [
+        "src",
+        "templates"
+    ],
+    "files": [
+        "LICENSE"
+    ],
+    "finder": [
+        {
+            "name": [
+                "*.php"
+            ],
+            "exclude": [
+                "tests"
+            ],
+            "in": [
+                "vendor"
+            ]
+        }
+    ],
+    "git-version": "package_version",
+    "main": "bin/mongo-migrator",
+    "output": "build/mongo-migrator.phar",
+    "stub": true,
+    "compactors": "Herrera\\Box\\Compactor\\Php",
+    "compression": "GZ"
+}

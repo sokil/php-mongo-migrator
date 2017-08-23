@@ -48,7 +48,8 @@ composer require "alcaeus/mongo-php-adapter" --ignore-platform-reqs
 Installation
 ------------
 
-Installation through composer:
+Install locally through composer
+=============================
 
 ```php
 composer.phar require sokil/php-mongo-migrator
@@ -56,8 +57,19 @@ composer.phar require sokil/php-mongo-migrator
 
 After installation you will be able to run commands in console by running ./vendor/bin/mongo-migrator command.
 
+Install phar
+============
+
+Run in shell:
 ```
-pc:~/php-mongo-migrator$ ./bin/mongo-migrator 
+wget https://github.com/sokil/php-mongo-migrator/build/mongo-migrator.phar && sudo mv mongo-migrator.phar /usr/local/bin
+```
+
+Useage
+------
+
+```
+$ ./mongo-migrator
 Console Tool
 
 Usage:
@@ -273,4 +285,23 @@ class RevisionName extends \Sokil\Mongo\Migrator\AbstractMigration
     }
 }
 ```
+
+Building Phar
+-------------
+
+1) Update composer
+```
+composer.phar update --ignore-platform-reqs --no-dev -o
+```
+
+2) Install box using manual at https://github.com/box-project/box2
+```
+composer global require kherge/box --prefer-source
+```
+
+2) Build phar
+```
+box build -v
+````
+
 
