@@ -1,3 +1,5 @@
 vendor
 composer.lock
 share
+build
+!build/.gitkeep

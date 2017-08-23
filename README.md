@@ -62,7 +62,7 @@ Install phar
 
 Run in shell:
 ```
-wget https://github.com/sokil/php-mongo-migrator/build/mongo-migrator.phar && sudo mv mongo-migrator.phar /usr/local/bin
+wget http://phpmongokit.github.io/dists/mongo-migrator.phar && sudo mv mongo-migrator.phar /usr/local/bin
 ```
 
 Useage
