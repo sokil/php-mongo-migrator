@@ -40,9 +40,14 @@ Compatibility with PHP 7
 > To start using PHPMongo with PHP7, add requirement [alcaeus/mongo-php-adapter](https://github.com/alcaeus/mongo-php-adapter) to composer.
 > Restrictions for using ODM with compatibility layer you can read in [known issues](https://github.com/alcaeus/mongo-php-adapter#known-issues) of original adapter.
 
-To use lib under PHP7, add requirement:
+Library `sokil/php-mongo` depends from old `ext-mongo` so you need to require dependency with `--ignore-platform-reqs` flag:
 ```
-composer require "alcaeus/mongo-php-adapter" --ignore-platform-reqs
+composer require sokil/php-mongo --ignore-platform-reqs
+```
+
+Also you need to require adapter of old `ext-mongo` API to new `ext-mongodb`:
+```
+composer require alcaeus/mongo-php-adapter
 ```
 
 Installation
