@@ -32,24 +32,6 @@ Requirements
 <br/>
 <br/>
 
-Compatibility with PHP 7
-------------------------
-
-> PHPMongo currently based on old [ext-mongo](https://pecl.php.net/package/mongo) entension.
-> To use this ODM with PHP 7, you need to add [compatibility layer](https://github.com/alcaeus/mongo-php-adapter), which implement API of old extension over new [ext-mongodb](https://pecl.php.net/package/mongodb).
-> To start using PHPMongo with PHP7, add requirement [alcaeus/mongo-php-adapter](https://github.com/alcaeus/mongo-php-adapter) to composer.
-> Restrictions for using ODM with compatibility layer you can read in [known issues](https://github.com/alcaeus/mongo-php-adapter#known-issues) of original adapter.
-
-Library `sokil/php-mongo` depends from old `ext-mongo` so you need to require dependency with `--ignore-platform-reqs` flag:
-```
-composer require sokil/php-mongo --ignore-platform-reqs
-```
-
-Also you need to require adapter of old `ext-mongo` API to new `ext-mongodb`:
-```
-composer require alcaeus/mongo-php-adapter
-```
-
 Installation
 ------------
 
@@ -67,6 +49,24 @@ After installation you will be able to run commands in console by running ./vend
 Run in shell:
 ```
 wget http://phpmongokit.github.io/dists/mongo-migrator.phar && chmod +x mongo-migrator.phar && sudo mv mongo-migrator.phar /usr/local/bin
+```
+
+Compatibility with PHP 7
+------------------------
+
+> PHPMongo currently based on old [ext-mongo](https://pecl.php.net/package/mongo) entension.
+> To use this ODM with PHP 7, you need to add [compatibility layer](https://github.com/alcaeus/mongo-php-adapter), which implement API of old extension over new [ext-mongodb](https://pecl.php.net/package/mongodb).
+> To start using PHPMongo with PHP7, add requirement [alcaeus/mongo-php-adapter](https://github.com/alcaeus/mongo-php-adapter) to composer.
+> Restrictions for using ODM with compatibility layer you can read in [known issues](https://github.com/alcaeus/mongo-php-adapter#known-issues) of original adapter.
+
+Library `sokil/php-mongo` depends from old `ext-mongo` so you need to require dependency with `--ignore-platform-reqs` flag:
+```
+composer require sokil/php-mongo-migrator --ignore-platform-reqs
+```
+
+Also you need to require adapter of old `ext-mongo` API to new `ext-mongodb`:
+```
+composer require alcaeus/mongo-php-adapter
 ```
 
 Useage
