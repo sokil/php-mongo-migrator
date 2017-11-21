@@ -58,12 +58,7 @@ wget http://phpmongokit.github.io/dists/mongo-migrator.phar && chmod +x mongo-mi
 > To start using PHPMongo with PHP7, add requirement [alcaeus/mongo-php-adapter](https://github.com/alcaeus/mongo-php-adapter) to composer.
 > Restrictions for using ODM with compatibility layer you can read in [known issues](https://github.com/alcaeus/mongo-php-adapter#known-issues) of original adapter.
 
-Library `sokil/php-mongo` depends from old `ext-mongo` so you need to require dependency with `--ignore-platform-reqs` flag:
-```
-composer require sokil/php-mongo-migrator --ignore-platform-reqs
-```
-
-Also you need to require adapter of old `ext-mongo` API to new `ext-mongodb`:
+You need to require adapter:
 ```
 composer require alcaeus/mongo-php-adapter
 ```
