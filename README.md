@@ -35,7 +35,7 @@ Requirements
 Installation
 ------------
 
-### Install locally through composer
+#### Install locally through composer
 
 
 ```php
@@ -44,15 +44,14 @@ composer.phar require sokil/php-mongo-migrator
 
 After installation you will be able to run commands in console by running ./vendor/bin/mongo-migrator command.
 
-### Install phar
+#### Install phar
 
 Run in shell:
 ```
 wget http://phpmongokit.github.io/dists/mongo-migrator.phar && chmod +x mongo-migrator.phar && sudo mv mongo-migrator.phar /usr/local/bin
 ```
 
-Compatibility with PHP 7
-------------------------
+#### Compatibility with PHP 7
 
 > PHPMongo currently based on old [ext-mongo](https://pecl.php.net/package/mongo) entension.
 > To use this ODM with PHP 7, you need to add [compatibility layer](https://github.com/alcaeus/mongo-php-adapter), which implement API of old extension over new [ext-mongodb](https://pecl.php.net/package/mongodb).
