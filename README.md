@@ -38,8 +38,8 @@ Installation
 #### Install locally through composer
 
 
-```php
-composer.phar require sokil/php-mongo-migrator
+```
+composer require sokil/php-mongo-migrator
 ```
 
 After installation you will be able to run commands in console by running ./vendor/bin/mongo-migrator command.
