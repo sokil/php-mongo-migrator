@@ -294,7 +294,14 @@ composer.phar update --ignore-platform-reqs --no-dev -o
 composer global require kherge/box --prefer-source
 ```
 
+Box then may be found in `~/.composer/vendor/bin/`
+
 2) Build phar
+
+To build phar files, disable setting `phar.readonly` in `php.ini`. 
+
+Then run:
+
 ```
 box build -v
 ````
