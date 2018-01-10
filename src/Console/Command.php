@@ -4,7 +4,7 @@ namespace Sokil\Mongo\Migrator\Console;
 
 use Sokil\Mongo\Migrator\Config;
 use Sokil\Mongo\Migrator\Console\Exception\ConfigurationNotFound;
-use \Sokil\Mongo\Migrator\Manager;
+use Sokil\Mongo\Migrator\Manager;
 use Symfony\Component\Yaml\Yaml;
 
 abstract class Command extends \Symfony\Component\Console\Command\Command
