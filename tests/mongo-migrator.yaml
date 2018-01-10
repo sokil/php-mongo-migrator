@@ -12,6 +12,8 @@ environments:
         
         log_database: test
         log_collection: migrations
+
+        env_var: %env(MONGO_TEST_SOME_ENV_VAR)%
         
     staging:
         dsn: mongodb://localhost
@@ -20,6 +22,8 @@ environments:
         
         log_database: test
         log_collection: migrations
+
+        env_var: %env(MONGO_TEST_SOME_ENV_VAR)%
     
     production:
         dsn: mongodb://localhost
@@ -29,4 +33,4 @@ environments:
         log_database: test
         log_collection: migrations
         
-    
+        env_var: %env(MONGO_TEST_SOME_ENV_VAR)%

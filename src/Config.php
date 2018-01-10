@@ -7,6 +7,8 @@ namespace Sokil\Mongo\Migrator;
  */
 class Config
 {
+    const ENV_PARAMETER_PATTERN = '/%env\(([a-z-A-Z0-9_]+)\)%/';
+
     /**
      * @var array
      */
@@ -37,17 +39,25 @@ class Config
      */
     public function get($name)
     {
+        $value = null;
+
+        // get value
         if (false === strpos($name, '.')) {
-            return isset($this->config[$name]) ? $this->config[$name] : null;
+            $value = isset($this->config[$name]) ? $this->config[$name] : null;
+        } else {
+            $value = $this->config;
+            foreach (explode('.', $name) as $field) {
+                if (!isset($value[$field])) {
+                    return null;
+                }
+
+                $value = $value[$field];
+            }
         }
 
-        $value = $this->config;
-        foreach (explode('.', $name) as $field) {
-            if (!isset($value[$field])) {
-                return null;
-            }
-
-            $value = $value[$field];
+        // replace value with env variable
+        if (preg_match(self::ENV_PARAMETER_PATTERN, $value, $matches)) {
+            $value = getenv($matches[1]);
         }
 
         return $value;

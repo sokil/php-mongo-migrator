@@ -19,6 +19,12 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals('migrations', $this->config->get('path.migrations'));
     }
+
+    public function testGetEnvVar()
+    {
+        putenv('MONGO_TEST_SOME_ENV_VAR=42');
+        $this->assertEquals('42', $this->config->get('environments.development.env_var'));
+    }
     
     public function testGetDefaultDatabaseName()
     {        
