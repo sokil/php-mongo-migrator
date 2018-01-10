@@ -78,7 +78,7 @@ class Config
      */
     public function getMigrationsDir()
     {
-        return rtrim($this->config['path']['migrations'], '/');
+        return rtrim($this->get('path.migrations'), '/');
     }
 
     /**
@@ -86,7 +86,7 @@ class Config
      */
     public function getDefaultEnvironment()
     {
-        return $this->config['default_environment'];
+        return $this->get('default_environment');
     }
 
     /**
@@ -100,7 +100,7 @@ class Config
             $environment = $this->getDefaultEnvironment();
         }
         
-        return $this->config['environments'][$environment]['default_database'];
+        return $this->get(sprintf('environments.%s.default_database', $environment));
     }
 
     /**
@@ -113,8 +113,8 @@ class Config
         if (!$environment) {
             $environment = $this->getDefaultEnvironment();
         }
-        
-        return $this->config['environments'][$environment]['dsn'];
+
+        return $this->get(sprintf('environments.%s.dsn', $environment));
     }
 
     /**
@@ -128,9 +128,12 @@ class Config
             $environment = $this->getDefaultEnvironment();
         }
 
-        return isset($this->config['environments'][$environment]['connectOptions'])
-            ? $this->config['environments'][$environment]['connectOptions']
-            : array();
+        $connectOptions = $this->get(sprintf('environments.%s.connectOptions', $environment));
+        if (empty($connectOptions)) {
+            $connectOptions = array();
+        }
+
+        return $connectOptions;
     }
 
     /**
@@ -143,8 +146,8 @@ class Config
         if (!$environment) {
             $environment = $this->getDefaultEnvironment();
         }
-        
-        return $this->config['environments'][$environment]['log_database'];
+
+        return $this->get(sprintf('environments.%s.log_database', $environment));
     }
 
     /**
@@ -157,7 +160,7 @@ class Config
         if (!$environment) {
             $environment = $this->getDefaultEnvironment();
         }
-        
-        return $this->config['environments'][$environment]['log_collection'];
+
+        return $this->get(sprintf('environments.%s.log_collection', $environment));
     }
 }
