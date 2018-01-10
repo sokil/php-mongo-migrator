@@ -348,6 +348,7 @@ class Manager
     public function migrate($revision, $environment)
     {
         $this->executeMigration($revision, $environment, 1);
+
         return $this;
     }
 
@@ -363,6 +364,7 @@ class Manager
     public function rollback($revision, $environment)
     {
         $this->executeMigration($revision, $environment, -1);
+
         return $this;
     }
 
@@ -374,6 +376,7 @@ class Manager
     public function onStart($listener)
     {
         $this->eventDispatcher->addListener('start', $listener);
+
         return $this;
     }
 
@@ -385,6 +388,7 @@ class Manager
     public function onBeforeMigrate($listener)
     {
         $this->eventDispatcher->addListener('before_migrate', $listener);
+
         return $this;
     }
 
@@ -396,6 +400,7 @@ class Manager
     public function onBeforeMigrateRevision($listener)
     {
         $this->eventDispatcher->addListener('before_migrate_revision', $listener);
+
         return $this;
     }
 
@@ -407,6 +412,7 @@ class Manager
     public function onMigrateRevision($listener)
     {
         $this->eventDispatcher->addListener('migrate_revision', $listener);
+
         return $this;
     }
 
@@ -418,12 +424,14 @@ class Manager
     public function onMigrate($listener)
     {
         $this->eventDispatcher->addListener('migrate', $listener);
+
         return $this;
     }
     
     public function onBeforeRollback($listener)
     {
         $this->eventDispatcher->addListener('before_rollback', $listener);
+
         return $this;
     }
 
@@ -435,6 +443,7 @@ class Manager
     public function onBeforeRollbackRevision($listener)
     {
         $this->eventDispatcher->addListener('before_rollback_revision', $listener);
+
         return $this;
     }
 
@@ -446,6 +455,7 @@ class Manager
     public function onRollbackRevision($listener)
     {
         $this->eventDispatcher->addListener('rollback_revision', $listener);
+
         return $this;
     }
 
@@ -457,6 +467,7 @@ class Manager
     public function onRollback($listener)
     {
         $this->eventDispatcher->addListener('rollback', $listener);
+
         return $this;
     }
 
@@ -468,6 +479,7 @@ class Manager
     public function onStop($listener)
     {
         $this->eventDispatcher->addListener('stop', $listener);
+
         return $this;
     }
 }
