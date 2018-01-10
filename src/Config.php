@@ -82,7 +82,7 @@ class Config
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDefaultEnvironment()
     {
@@ -92,7 +92,7 @@ class Config
     /**
      * @param string|null $environment
      *
-     * @return string
+     * @return string|null
      */
     public function getDefaultDatabaseName($environment = null)
     {
@@ -106,7 +106,7 @@ class Config
     /**
      * @param string|null $environment
      *
-     * @return string
+     * @return string|null
      */
     public function getDsn($environment = null)
     {
@@ -139,7 +139,7 @@ class Config
     /**
      * @param string|null $environment
      *
-     * @return string
+     * @return string|null
      */
     public function getLogDatabaseName($environment = null)
     {
@@ -153,7 +153,7 @@ class Config
     /**
      * @param string|null $environment
      *
-     * @return string
+     * @return string|null
      */
     public function getLogCollectionName($environment = null)
     {
