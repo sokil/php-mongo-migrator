@@ -2,37 +2,43 @@
 
 namespace Sokil\Mongo\Migrator;
 
+use Sokil\Mongo\Collection;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Sokil\Mongo\Client;
 use Sokil\Mongo\Migrator\Event\ApplyRevisionEvent;
 
+/**
+ * Migration management
+ */
 class Manager
 {
     /**
-     *
-     * @var \Sokil\Mongo\Migrator\Config
+     * @var Config
      */
     private $config;
-    
+
+    /**
+     * @var string
+     */
     private $rootDir;
     
     /**
-     *
-     * @var \Sokil\Mongo\Client
+     * @var Client
      */
     private $client;
     
     /**
-     *
-     * @var \Sokil\Mongo\Collection
+     * @var Collection
      */
     private $logCollection;
-    
+
+    /**
+     * @var array
+     */
     private $appliedRevisions = array();
     
     /**
-     *
-     * @var \Symfony\Component\EventDispatcher\EventDispatcher
+     * @var EventDispatcher
      */
     private $eventDispatcher;
     
@@ -45,7 +51,8 @@ class Manager
     
     /**
      * @param string $environment
-     * @return \Sokil\Mongo\Client
+     *
+     * @return Client
      */
     private function getClient($environment)
     {
@@ -60,7 +67,10 @@ class Manager
         
         return $this->client[$environment];
     }
-    
+
+    /**
+     * @return string
+     */
     public function getMigrationsDir()
     {
         $migrationsDir = $this->config->getMigrationsDir();
@@ -97,7 +107,14 @@ class Manager
         
         return $list;
     }
-    
+
+    /**
+     * @param string $environment
+     *
+     * @return Collection
+     *
+     * @throws \Sokil\Mongo\Exception
+     */
     protected function getLogCollection($environment)
     {
         if ($this->logCollection) {
@@ -114,17 +131,37 @@ class Manager
         
         return $this->logCollection;
     }
-    
+
+    /**
+     * @param string $revision
+     * @param string $environment
+     *
+     * @return self
+     *
+     * @throws \Sokil\Mongo\Exception
+     * @throws \Sokil\Mongo\Exception\WriteException
+     */
     protected function logUp($revision, $environment)
     {
-        $this->getLogCollection($environment)->createDocument(array(
-            'revision'  => $revision,
-            'date'      => new \MongoDate,
-        ))->save();
+        $this
+            ->getLogCollection($environment)
+            ->createDocument(array(
+                'revision'  => $revision,
+                'date'      => new \MongoDate,
+            ))
+            ->save();
         
         return $this;
     }
-    
+
+    /**
+     * @param string $revision
+     * @param string $environment
+     *
+     * @return self
+     *
+     * @throws \Sokil\Mongo\Exception
+     */
     protected function logDown($revision, $environment)
     {
         $collection = $this->getLogCollection($environment);
@@ -132,20 +169,29 @@ class Manager
         
         return $this;
     }
-    
+
+    /**
+     * @param string $environment
+     *
+     * @return array
+     *
+     * @throws \Sokil\Mongo\Exception
+     */
     public function getAppliedRevisions($environment)
     {
         if (isset($this->appliedRevisions[$environment])) {
             return $this->appliedRevisions[$environment];
         }
         
-        $documents = array_values($this
-            ->getLogCollection($environment)
-            ->find()
-            ->sort(array('revision' => 1))
-            ->map(function ($document) {
-                return $document->revision;
-            }));
+        $documents = array_values(
+            $this
+                ->getLogCollection($environment)
+                ->find()
+                ->sort(array('revision' => 1))
+                ->map(function ($document) {
+                    return $document->revision;
+                })
+        );
             
         if (!$documents) {
             return array();
@@ -155,18 +201,41 @@ class Manager
             
         return $this->appliedRevisions[$environment];
     }
-    
+
+    /**
+     * @param string $revision
+     * @param string $environment
+     *
+     * @return bool
+     *
+     * @throws \Sokil\Mongo\Exception
+     */
     public function isRevisionApplied($revision, $environment)
     {
         return in_array($revision, $this->getAppliedRevisions($environment));
     }
-    
+
+    /**
+     * @param string $environment
+     *
+     * @return string
+     *
+     * @throws \Sokil\Mongo\Exception
+     */
     protected function getLatestAppliedRevisionId($environment)
     {
         $revisions = $this->getAppliedRevisions($environment);
         return end($revisions);
     }
-    
+
+    /**
+     * @param string $targetRevision
+     * @param string $environment
+     * @param string $direction
+     *
+     * @throws \Sokil\Mongo\Exception
+     * @throws \Sokil\Mongo\Exception\WriteException
+     */
     protected function executeMigration($targetRevision, $environment, $direction)
     {
         $this->eventDispatcher->dispatch('start');
@@ -266,43 +335,86 @@ class Manager
         // clear cached applied revisions
         unset($this->appliedRevisions[$environment]);
     }
-    
+
+    /**
+     * @param string $revision
+     * @param string $environment
+     *
+     * @return self
+     *
+     * @throws \Sokil\Mongo\Exception
+     * @throws \Sokil\Mongo\Exception\WriteException
+     */
     public function migrate($revision, $environment)
     {
         $this->executeMigration($revision, $environment, 1);
         return $this;
     }
-    
+
+    /**
+     * @param string $revision
+     * @param string $environment
+     *
+     * @return self
+     *
+     * @throws \Sokil\Mongo\Exception
+     * @throws \Sokil\Mongo\Exception\WriteException
+     */
     public function rollback($revision, $environment)
     {
         $this->executeMigration($revision, $environment, -1);
         return $this;
     }
 
+    /**
+     * @param callable $listener
+     *
+     * @return self
+     */
     public function onStart($listener)
     {
         $this->eventDispatcher->addListener('start', $listener);
         return $this;
     }
-    
+
+    /**
+     * @param callable $listener
+     *
+     * @return self
+     */
     public function onBeforeMigrate($listener)
     {
         $this->eventDispatcher->addListener('before_migrate', $listener);
         return $this;
     }
-    
+
+    /**
+     * @param callable $listener
+     *
+     * @return self
+     */
     public function onBeforeMigrateRevision($listener)
     {
         $this->eventDispatcher->addListener('before_migrate_revision', $listener);
         return $this;
     }
-    
+
+    /**
+     * @param callable $listener
+     *
+     * @return self
+     */
     public function onMigrateRevision($listener)
     {
         $this->eventDispatcher->addListener('migrate_revision', $listener);
         return $this;
     }
-    
+
+    /**
+     * @param callable $listener
+     *
+     * @return self
+     */
     public function onMigrate($listener)
     {
         $this->eventDispatcher->addListener('migrate', $listener);
@@ -314,25 +426,45 @@ class Manager
         $this->eventDispatcher->addListener('before_rollback', $listener);
         return $this;
     }
-    
+
+    /**
+     * @param callable $listener
+     *
+     * @return self
+     */
     public function onBeforeRollbackRevision($listener)
     {
         $this->eventDispatcher->addListener('before_rollback_revision', $listener);
         return $this;
     }
-    
+
+    /**
+     * @param callable $listener
+     *
+     * @return self
+     */
     public function onRollbackRevision($listener)
     {
         $this->eventDispatcher->addListener('rollback_revision', $listener);
         return $this;
     }
-    
+
+    /**
+     * @param callable $listener
+     *
+     * @return self
+     */
     public function onRollback($listener)
     {
         $this->eventDispatcher->addListener('rollback', $listener);
         return $this;
     }
-    
+
+    /**
+     * @param callable $listener
+     *
+     * @return self
+     */
     public function onStop($listener)
     {
         $this->eventDispatcher->addListener('stop', $listener);

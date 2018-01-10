@@ -299,4 +299,27 @@ composer global require kherge/box --prefer-source
 box build -v
 ````
 
+Development
+-----------
+
+To start development environment in docker run:
+```
+PHPMONGO_DEBUG=1 docker-compose up
+```
+
+Unit tests
+----------
+
+Local tests:
+
+```
+composer.phar test
+```
+
+Docker tests:
+
+```
+docker-compose up
+```
+
 
