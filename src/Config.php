@@ -36,6 +36,8 @@ class Config
      * @param string $name
      *
      * @return array|string|int|null
+     *
+     * @throws \RuntimeException when param defined as env variable but env variable not defined
      */
     public function get($name)
     {
@@ -57,7 +59,15 @@ class Config
 
         // replace value with env variable
         if (preg_match(self::ENV_PARAMETER_PATTERN, $value, $matches)) {
-            $value = getenv($matches[1]);
+            $envValue = getenv($matches[1]);
+            if ($envValue === false) {
+                throw new \RuntimeException(sprintf(
+                    'No environment variable found with name %s',
+                    $matches[1]
+                ));
+            }
+
+            $value = $envValue;
         }
 
         return $value;
