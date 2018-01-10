@@ -5,8 +5,9 @@ namespace Sokil\Mongo\Migrator\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
+use Sokil\Mongo\Migrator\Console\Command;
 
-class Create extends \Sokil\Mongo\Migrator\Console\Command
+class Create extends Command
 {
     protected function configure()
     {
@@ -20,7 +21,15 @@ class Create extends \Sokil\Mongo\Migrator\Console\Command
             )
             ->setHelp('Create new migration');
     }
-    
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return int|null|void
+     *
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $className = $input->getArgument('name');
@@ -33,27 +42,27 @@ class Create extends \Sokil\Mongo\Migrator\Console\Command
         }
         
         $migrationFilename = date('YmdHis') . '_' . $className . '.php';
-        $migrationFiledir = $this->getManager()->getMigrationsDir();
-        $migrationFilepath =  $migrationFiledir . '/' . $migrationFilename;
+        $migrationFileDir = $this->getManager()->getMigrationsDir();
+        $migrationFilePath =  $migrationFileDir . '/' . $migrationFilename;
         
-        if (file_exists($migrationFilepath)) {
+        if (file_exists($migrationFilePath)) {
             throw new \Exception('Migration file with same name already exists');
         }
         
-        if (!is_writeable(dirname($migrationFilepath))) {
-            throw new \Exception('Permission denied for writting to ' . $migrationFilepath);
+        if (!is_writeable(dirname($migrationFilePath))) {
+            throw new \Exception('Permission denied for writting to ' . $migrationFilePath);
         }
         
         // create migrations file
         $migrationFileContent = str_replace(
             '{{MIGRATION_CLASSNAME}}',
             $className,
-            file_get_contents(__DIR__ . '/../../MigrationTemplate.php.dist')
+            file_get_contents(__DIR__ . '/../../../templates/MigrationTemplate.php.dist')
         );
         
-        file_put_contents($migrationFilepath, $migrationFileContent);
+        file_put_contents($migrationFilePath, $migrationFileContent);
         
         // show result
-        $output->writeln('New migration created at ' . $migrationFilepath);
+        $output->writeln('New migration created at ' . $migrationFilePath);
     }
 }
