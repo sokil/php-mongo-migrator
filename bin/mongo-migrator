@@ -2,12 +2,12 @@
 <?php
 
 // find and load autoloader
-$autoloadPathList = [
+$autoloadPathList = array(
     // phar, global install, dev
     __DIR__ . '/../vendor/autoload.php',
     // install to vendor/bin
     __DIR__ . '/../../../autoload.php'
-];
+);
 
 foreach ($autoloadPathList as $autoloadPath) {
     if (file_exists($autoloadPath)) {
