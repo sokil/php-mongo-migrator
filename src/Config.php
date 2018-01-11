@@ -79,7 +79,15 @@ class Config
             $environment = $this->getDefaultEnvironment();
         }
         
-        return $this->config['environments'][$environment]['log_database'];
+        $log = $this->config['environments'][$environment]['log_database'];
+        
+        if ($log[0] === '%' && $log[strlen($log) - 1] === '%') {
+            $param = str_replace('%', '', $log);
+
+            return getenv($param);
+        }
+
+        return $log;
     }
     
     public function getLogCollectionName($environment = null)
