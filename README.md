@@ -167,16 +167,19 @@ Every environment has this parameters:
 
 #### Environment variables in configuration
 
-Any value may be initialised from environment valiable:
+Any value may be initialised from environment variable:
 
 ```yaml
 
+default_environment: common
+
+path:
+    migrations:  "%env(MONGO_MIGRATIONS_PATH)%"
+
 environments:
-    development:
+    common:
         dsn: "%env(MONGO_DSN)%"
-
         default_database: "%env(MONGO_DEFAULT_DB)%"
-
         log_database: "%env(MONGO_LOG_DB)%"
         log_collection: "%env(MONGO_LOG_COLLECTION)%"
 ```
