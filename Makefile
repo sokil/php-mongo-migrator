@@ -8,6 +8,7 @@ ifndef BOX_INSTALLED
 endif
 
 build: check_box_installed
+	mkdir build
 	composer.phar update --no-dev -o
 	box build -v
 
@@ -16,4 +17,4 @@ dev:
 
 clean:
 	rm -rf ./vendor
-	rm -rf ./build/mongo-migrator.phar
+	rm -rf ./build
