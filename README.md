@@ -309,15 +309,8 @@ Building Phar
 ```
 composer.phar update --no-dev -o
 ```
-
 2) Install box using manual at https://github.com/box-project/box2
-
 3) Build phar
-
-To build phar files, disable setting `phar.readonly` in `php.ini`. 
-
-Then run:
-
 ```
 box build -v
 ````
