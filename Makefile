@@ -12,7 +12,7 @@ build: check_box_installed
 	box build -v
 
 dev:
-	composer.phar update --no-dev -o
+	composer.phar update -o
 
 clean:
 	rm -rf ./vendor
