@@ -305,14 +305,10 @@ class RevisionName extends \Sokil\Mongo\Migrator\AbstractMigration
 Building Phar
 -------------
 
-1) Update composer
+1) Install box using manual at https://github.com/box-project/box2
+2) Build phar
 ```
-composer.phar update --no-dev -o
-```
-2) Install box using manual at https://github.com/box-project/box2
-3) Build phar
-```
-box build -v
+make
 ````
 
 Development
