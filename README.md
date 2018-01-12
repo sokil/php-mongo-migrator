@@ -107,7 +107,7 @@ vendor/bin/mongo-migrator init --configFormat=php
 Configuration
 -------------
 
-## Configuration format
+#### Configuration format
 
 YAML configuration file placed in file "./mongo-migrator.yaml". PHP has same structure.
 
@@ -165,7 +165,7 @@ Every environment has this parameters:
 
 * environments.*.log_collection - collection of database environments.*.log_database used to store migration log
 
-## Environment variables in configuration
+#### Environment variables in configuration
 
 Any value may be initialised from environment valiable:
 
