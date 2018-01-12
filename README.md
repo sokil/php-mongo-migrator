@@ -60,7 +60,7 @@ You need to require adapter:
 composer require alcaeus/mongo-php-adapter
 ```
 
-Useage
+Usage
 ------
 
 ```
@@ -89,8 +89,8 @@ Available commands:
   status    Show status of migrations
 ```
 
-Initialising migrations
------------------------
+Initialisation of migrations
+----------------------------
 
 Every command run in project root where composer.json and vendor dir placed. First we need to create 
 new migration project. To do that go to project root and run:
@@ -106,6 +106,8 @@ vendor/bin/mongo-migrator init --configFormat=php
 
 Configuration
 -------------
+
+## Configuration format
 
 YAML configuration file placed in file "./mongo-migrator.yaml". PHP has same structure.
 
@@ -162,6 +164,22 @@ Every environment has this parameters:
 * environments.*.log_database - database, used to store migration log
 
 * environments.*.log_collection - collection of database environments.*.log_database used to store migration log
+
+## Environment variables in configuration
+
+Any value may be initialised from environment valiable:
+
+```yaml
+
+environments:
+    development:
+        dsn: "%env(MONGO_DSN)%"
+
+        default_database: "%env(MONGO_DEFAULT_DB)%"
+
+        log_database: "%env(MONGO_LOG_DB)%"
+        log_collection: "%env(MONGO_LOG_COLLECTION)%"
+```
 
 Creating new revision
 ---------------------
