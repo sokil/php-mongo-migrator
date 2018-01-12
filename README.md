@@ -307,17 +307,12 @@ Building Phar
 
 1) Update composer
 ```
-composer.phar update --ignore-platform-reqs --no-dev -o
+composer.phar update --no-dev -o
 ```
 
 2) Install box using manual at https://github.com/box-project/box2
-```
-composer global require kherge/box --prefer-source
-```
 
-Box then may be found in `~/.composer/vendor/bin/`
-
-2) Build phar
+3) Build phar
 
 To build phar files, disable setting `phar.readonly` in `php.ini`. 
 
