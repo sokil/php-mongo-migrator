@@ -23,7 +23,13 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     public function testGetEnvVar()
     {
         putenv('MONGO_TEST_SOME_ENV_VAR=42');
+
+        // get scalar value
         $this->assertEquals('42', $this->config->get('environments.development.env_var'));
+
+        // get config section
+        $configSection = $this->config->get('environments.development');
+        $this->assertEquals('42', $configSection['env_var']);
     }
     
     public function testGetDefaultDatabaseName()

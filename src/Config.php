@@ -58,8 +58,26 @@ class Config
         }
 
         // replace value with env variable
-        // @todo: iterate over array values and replace env patterns
-        if (!is_array($value)) {
+        $value = $this->replaceConfigValuePlaceholders($value);
+
+        return $value;
+    }
+
+    /**
+     * Convert placeholders in values of any config section
+     *
+     * @param array|string $value
+     *
+     * @return array|string
+     */
+    private function replaceConfigValuePlaceholders($value)
+    {
+        if (is_array($value)) {
+            foreach ($value as $subKey => $subValue) {
+                $value[$subKey] = $this->replaceConfigValuePlaceholders($subValue);
+            }
+        } else {
+            // replace environment variable
             if (preg_match(self::ENV_PARAMETER_PATTERN, $value, $matches)) {
                 $envValue = getenv($matches[1]);
                 if ($envValue === false) {
