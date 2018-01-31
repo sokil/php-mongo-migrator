@@ -13,7 +13,7 @@ Schema not required in MongoDb, so we dont need to create databases, collections
 * Creating collections with special parameters, like capped collection;
 * Renaming or deleting collections;
 * Creating, renaming or deleting fields;
-* Creating, changing or deleting indexes
+* Creating, changing or deleting indexes;
 
 Requirements
 ------------
