@@ -29,13 +29,16 @@ matrix:
 services: mongodb
 
 before_script:
+  - PHP_VERSION=$(php -r 'echo phpversion();')
   - phpunit --version
   - mongod --version
   - mkdir -p ./share
-  - if [[ ${TRAVIS_PHP_VERSION:0:2} == "5." ]]; then echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
-  - if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then echo "extension = mongodb.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - echo $TRAVIS_PHP_VERSION
+  - echo $PHP_VERSION
+  - if [[ ${PHP_VERSION:0:2} == "5." ]]; then echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ ${PHP_VERSION:0:2} == "7." ]]; then echo "extension = mongodb.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - composer update --no-interaction
-  - if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then composer require "alcaeus/mongo-php-adapter"; fi
+  - if [[ ${PHP_VERSION:0:2} == "7." ]]; then composer require "alcaeus/mongo-php-adapter"; fi
   
 script:
   - composer cover
