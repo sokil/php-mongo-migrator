@@ -27,22 +27,31 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
                 InputOption::VALUE_OPTIONAL,
                 'Environment name'
             )
+            ->addOption(
+                '--specifiedRevision',
+                '-s',
+                InputOption::VALUE_OPTIONAL,
+                'Environment name'
+            )
             ->setHelp('Rollback to specific revision of database');
     }
-    
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // version
         $revision = $input->getOption('revision');
-        
+
         // environment
         $environment = $input->getOption('environment');
+
+        $specifiedRev = $input->getOption('specifiedRevision');
+
         if (!$environment) {
             $environment = $this->getConfig()->getDefaultEnvironment();
         }
-        
+
         $output->writeln('Environment: <comment>' . $environment . '</comment>');
-        
+
         // execute
         $this->getManager()
             ->onBeforeRollbackRevision(function (ApplyRevisionEvent $event) use ($output) {
@@ -52,6 +61,6 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
             ->onRollbackRevision(function (ApplyRevisionEvent $event) use ($output) {
                 $output->writeln('done.');
             })
-            ->rollback($revision, $environment);
+            ->rollback($revision, $environment, $specifiedRev);
     }
 }

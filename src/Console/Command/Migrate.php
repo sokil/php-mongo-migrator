@@ -27,22 +27,30 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
                 InputOption::VALUE_OPTIONAL,
                 'Environment name'
             )
+            ->addOption(
+                '--specifiedRevision',
+                '-s',
+                InputOption::VALUE_OPTIONAL,
+                'Environment name'
+            )
             ->setHelp('Migrate to specific revision of database');
     }
-    
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // version
         $revision = $input->getOption('revision');
-        
+
         // environment
         $environment = $input->getOption('environment');
+
+        $specifiedRev = $input->getOption('specifiedRevision');
         if (!$environment) {
             $environment = $this->getConfig()->getDefaultEnvironment();
         }
-        
+
         $output->writeln('Environment: <comment>' . $environment . '</comment>');
-        
+
         // execute
         $this->getManager()
             ->onBeforeMigrateRevision(function (ApplyRevisionEvent $event) use ($output) {
@@ -52,6 +60,6 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
             ->onMigrateRevision(function (ApplyRevisionEvent $event) use ($output) {
                 $output->writeln('done.');
             })
-            ->migrate($revision, $environment);
+            ->migrate($revision, $environment, $specifiedRev);
     }
 }

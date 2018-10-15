@@ -21,12 +21,12 @@ class Manager
      * @var string
      */
     private $rootDir;
-    
+
     /**
      * @var Client
      */
     private $client;
-    
+
     /**
      * @var Collection
      */
@@ -36,19 +36,19 @@ class Manager
      * @var array
      */
     private $appliedRevisions = array();
-    
+
     /**
      * @var EventDispatcher
      */
     private $eventDispatcher;
-    
+
     public function __construct(Config $config, $rootDir)
     {
         $this->config = $config;
         $this->rootDir = $rootDir;
         $this->eventDispatcher = new EventDispatcher;
     }
-    
+
     /**
      * @param string $environment
      *
@@ -61,10 +61,10 @@ class Manager
                 $this->config->getDsn($environment),
                 $this->config->getConnectOptions($environment)
             );
-            
+
             $this->client[$environment]->useDatabase($this->config->getDefaultDatabaseName($environment));
         }
-        
+
         return $this->client[$environment];
     }
 
@@ -77,7 +77,7 @@ class Manager
         if ($migrationsDir[0] === '/') {
             return $migrationsDir;
         }
-        
+
         return $this->rootDir . '/' . rtrim($migrationsDir, '/');
     }
 
@@ -91,20 +91,20 @@ class Manager
             if (!$file->isFile()) {
                 continue;
             }
-            
+
             list($id, $className) = explode('_', $file->getBasename('.php'));
-            
+
             $revision = new Revision();
             $revision
                 ->setId($id)
                 ->setName($className)
                 ->setFilename($file->getFilename());
-            
+
             $list[$id] = $revision;
-            
+
             krsort($list);
         }
-        
+
         return $list;
     }
 
@@ -120,15 +120,15 @@ class Manager
         if ($this->logCollection) {
             return $this->logCollection;
         }
-        
+
         $databaseName = $this->config->getLogDatabaseName($environment);
         $collectionName = $this->config->getLogCollectionName($environment);
-        
+
         $this->logCollection = $this
             ->getClient($environment)
             ->getDatabase($databaseName)
             ->getCollection($collectionName);
-        
+
         return $this->logCollection;
     }
 
@@ -150,7 +150,7 @@ class Manager
                 'date'      => new \MongoDate,
             ))
             ->save();
-        
+
         return $this;
     }
 
@@ -166,7 +166,7 @@ class Manager
     {
         $collection = $this->getLogCollection($environment);
         $collection->batchDelete($collection->expression()->where('revision', $revision));
-        
+
         return $this;
     }
 
@@ -182,7 +182,7 @@ class Manager
         if (isset($this->appliedRevisions[$environment])) {
             return $this->appliedRevisions[$environment];
         }
-        
+
         $documents = array_values(
             $this
                 ->getLogCollection($environment)
@@ -192,13 +192,13 @@ class Manager
                     return $document->revision;
                 })
         );
-            
+
         if (!$documents) {
             return array();
         }
-        
+
         $this->appliedRevisions[$environment] = $documents;
-            
+
         return $this->appliedRevisions[$environment];
     }
 
@@ -236,37 +236,48 @@ class Manager
      * @throws \Sokil\Mongo\Exception
      * @throws \Sokil\Mongo\Exception\WriteException
      */
-    protected function executeMigration($targetRevision, $environment, $direction)
+    protected function executeMigration($targetRevision, $environment, $direction, $specifiedRevision = null)
     {
         $this->eventDispatcher->dispatch('start');
-        
+
         // get last applied migration
         $latestRevisionId = $this->getLatestAppliedRevisionId($environment);
-        
+
         // get list of migrations
         $availableRevisions = $this->getAvailableRevisions();
-        
+
         // execute
         if ($direction === 1) {
             $this->eventDispatcher->dispatch('before_migrate');
-            
+
             ksort($availableRevisions);
 
             foreach ($availableRevisions as $revision) {
-                if ($revision->getId() <= $latestRevisionId) {
+                if ($revision->getId() <= $latestRevisionId && empty($specifiedRevision)) {
                     continue;
                 }
-                
+                if (
+                (
+                    !empty($specifiedRevision) &&
+                    (
+                        $revision->getId() != $specifiedRevision ||
+                        in_array($specifiedRevision, $this->appliedRevisions[$environment])
+                    )
+                )
+                ) {
+                    continue;
+                }
+
                 $event = new ApplyRevisionEvent();
                 $event->setRevision($revision);
-                
+
                 $this->eventDispatcher->dispatch('before_migrate_revision', $event);
 
                 $revisionPath = $this->getMigrationsDir() . '/' . $revision->getFilename();
                 require_once $revisionPath;
 
                 $className = $revision->getName();
-                
+
                 $migration = new $className(
                     $this->getClient($environment)
                 );
@@ -274,64 +285,78 @@ class Manager
                 $migration->setEnvironment($environment);
 
                 $migration->up();
-                
+
                 $this->logUp($revision->getId(), $environment);
-                
+
                 $this->eventDispatcher->dispatch('migrate_revision', $event);
-                
+
                 if ($targetRevision && in_array($targetRevision, array($revision->getId(), $revision->getName()))) {
                     break;
                 }
             }
-            
+
             $this->eventDispatcher->dispatch('migrate');
         } else {
             $this->eventDispatcher->dispatch('before_rollback');
-            
+
             // check if nothing to revert
             if (!$latestRevisionId) {
                 return;
             }
-            
+
             krsort($availableRevisions);
 
             foreach ($availableRevisions as $revision) {
                 if ($revision->getId() > $latestRevisionId) {
                     continue;
                 }
-                
-                if ($targetRevision && in_array($targetRevision, array($revision->getId(), $revision->getName()))) {
+
+                if (
+                    $targetRevision &&
+                    in_array($targetRevision, array($revision->getId(), $revision->getName())) &&
+                    empty($specifiedRevision)
+                ) {
                     break;
                 }
-                
+
+                if (!empty($specifiedRevision) && ($revision->getId() != $specifiedRevision)) {
+                    continue;
+                }
+                if (
+                    !empty($specifiedRevision) &&
+                    !in_array($specifiedRevision, $this->appliedRevisions[$environment])
+                ) {
+                    break;
+                }
+
                 $event = new ApplyRevisionEvent();
                 $event->setRevision($revision);
-                
+
                 $this->eventDispatcher->dispatch('before_rollback_revision', $event);
 
                 $revisionPath = $this->getMigrationsDir() . '/' . $revision->getFilename();
                 require_once $revisionPath;
 
                 $className = $revision->getName();
-                
+
                 $migration = new $className($this->getClient($environment));
                 $migration->setEnvironment($environment);
                 $migration->down();
-                
+
                 $this->logDown($revision->getId(), $environment);
-                
+
                 $this->eventDispatcher->dispatch('rollback_revision', $event);
-                
+
                 if (!$targetRevision) {
                     break;
                 }
             }
-            
+
             $this->eventDispatcher->dispatch('rollback');
         }
-        
+
         $this->eventDispatcher->dispatch('stop');
-        
+
         // clear cached applied revisions
         unset($this->appliedRevisions[$environment]);
     }
@@ -345,9 +370,9 @@ class Manager
      * @throws \Sokil\Mongo\Exception
      * @throws \Sokil\Mongo\Exception\WriteException
      */
-    public function migrate($revision, $environment)
+    public function migrate($revision, $environment, $specifiedRev = null)
     {
-        $this->executeMigration($revision, $environment, 1);
+        $this->executeMigration($revision, $environment, 1, $specifiedRev);
 
         return $this;
     }
@@ -361,9 +386,9 @@ class Manager
      * @throws \Sokil\Mongo\Exception
      * @throws \Sokil\Mongo\Exception\WriteException
      */
-    public function rollback($revision, $environment)
+    public function rollback($revision, $environment, $specifiedRev = null)
     {
-        $this->executeMigration($revision, $environment, -1);
+        $this->executeMigration($revision, $environment, -1, $specifiedRev);
 
         return $this;
     }
@@ -427,7 +452,7 @@ class Manager
 
         return $this;
     }
-    
+
     public function onBeforeRollback($listener)
     {
         $this->eventDispatcher->addListener('before_rollback', $listener);
