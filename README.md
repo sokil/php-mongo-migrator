@@ -19,7 +19,8 @@ Requirements
 ------------
 
 * PHP 5
-  * PHP 5.3 - PHP 5.6
+  * PHP 5.3 not supported starting from 2018-10-19
+  * PHP 5.4 - PHP 5.6
   * [PHP Mongo Extension](https://pecl.php.net/package/mongo) 0.9 or above (Some features require >= 1.5)
 * PHP 7
   * [PHP MongoDB Extension](https://pecl.php.net/package/mongodb) 1.0 or above
