@@ -24,7 +24,7 @@ Requirements
   * [PHP Mongo Extension](https://pecl.php.net/package/mongo) 0.9 or above (Some features require >= 1.5)
 * PHP 7
   * [PHP MongoDB Extension](https://pecl.php.net/package/mongodb) 1.0 or above
-  * [Compatibility layer](https://github.com/alcaeus/mongo-php-adapter). Please, note some [restriontions](#compatibility-with-php-7)
+  * [Compatibility layer](https://github.com/alcaeus/mongo-php-adapter). Please, note some [restrictions](#compatibility-with-php-7)
 * HHVM
   * HHVM Driver [not supported](https://derickrethans.nl/mongodb-hhvm.html).
 <br/>
