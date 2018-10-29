@@ -36,7 +36,6 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         } catch (\Exception $e) {
             throw $e;
         }
-        
     }
     
     public function tearDown()

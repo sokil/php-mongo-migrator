@@ -47,3 +47,4 @@ services:
     environment:
       PHP_IDE_CONFIG: "serverName=phpmongo"
       XDEBUG_CONFIG: "idekey=PHPSTORM remote_autostart=1 remote_enable=1 remote_host=dockerhost remote_port=9001"
+      PHPMONGO_DSN: monfodb://mongodb34

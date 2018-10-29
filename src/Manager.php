@@ -82,11 +82,18 @@ class Manager
     }
 
     /**
+     * @param int|null $limit If specified, get only last revisions
+     *
      * @return Revision[]
      */
-    public function getAvailableRevisions()
+    public function getAvailableRevisions($limit = null)
     {
-        $list = array();
+        if ($limit !==null && !is_integer($limit)) {
+            throw new \InvalidArgumentException('Limit must be integer');
+        }
+
+        $list = [];
+
         foreach (new \DirectoryIterator($this->getMigrationsDir()) as $file) {
             if (!$file->isFile()) {
                 continue;
@@ -102,9 +109,13 @@ class Manager
             
             $list[$id] = $revision;
             
-            krsort($list);
+            ksort($list);
         }
-        
+
+        if ($limit !== null) {
+            $list = array_slice($list, -$limit);
+        }
+
         return $list;
     }
 

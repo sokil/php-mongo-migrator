@@ -33,12 +33,12 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     }
     
     public function testGetDefaultDatabaseName()
-    {        
+    {
         $this->assertEquals('test', $this->config->getDefaultDatabaseName('development'));
     }
     
     public function testGetDsn()
-    {        
+    {
         $this->assertEquals('mongodb://localhost', $this->config->getDsn('development'));
     }
 
@@ -49,12 +49,12 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     }
     
     public function testGetLogDatabaseName()
-    {        
+    {
         $this->assertEquals('test', $this->config->getLogDatabaseName('development'));
     }
     
     public function testGetLogCollectionName()
-    {        
+    {
         $this->assertEquals('migrations', $this->config->getLogCollectionName('development'));
     }
 }
