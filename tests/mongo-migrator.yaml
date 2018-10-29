@@ -5,7 +5,7 @@ path:
     
 environments:
     development:
-        dsn: mongodb://localhost
+        dsn: "mongodb://localhost"
         connectOptions:
           replicaSet: testrs
         default_database: test
@@ -16,7 +16,7 @@ environments:
         env_var: "%env(MONGO_TEST_SOME_ENV_VAR)%"
         
     staging:
-        dsn: mongodb://localhost
+        dsn: "mongodb://localhost"
         
         default_database: staging_db
         

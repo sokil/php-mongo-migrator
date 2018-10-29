@@ -27,10 +27,13 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
             }
 
             // init manager
-            $this->manager = new ManagerMock( new Config($config), __DIR__);
+            $this->manager = new ManagerMock(
+                new Config($config),
+                __DIR__
+            );
+
             $this->manager->resetCollection('staging');
         } catch (\Exception $e) {
-            var_export($e);
             throw $e;
         }
         

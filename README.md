@@ -317,8 +317,10 @@ Development
 
 To start development environment in docker run:
 ```
-PHPMONGO_DEBUG=1 docker-compose up
+./run-docker-cli.sh
 ```
+
+To use `xdebug`, configure your IDE to use port 9001. 
 
 Unit tests
 ----------
@@ -332,7 +334,7 @@ composer.phar test
 Docker tests:
 
 ```
-docker-compose up
+./run-docker-tests.sh
 ```
 
 
