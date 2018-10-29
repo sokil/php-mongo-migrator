@@ -320,7 +320,14 @@ To start development environment in docker run:
 ./run-docker-cli.sh
 ```
 
-To use `xdebug`, configure your IDE to use port 9001. 
+To use `xdebug`, configure your IDE to use port 9001.
+
+There is sandbox to test commands:
+
+```
+cd /phpmongo/tests/
+export PHPMONGO_DSN="mongodb://mongodb32"; ../bin/mongo-migrator -vvv status -l 4 -e docker
+``` 
 
 Unit tests
 ----------
