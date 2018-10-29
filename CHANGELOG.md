@@ -1,6 +1,6 @@
 ## 0.7.0 (2018-10-29)
   * Stop support of PHP 5.3
-  * Status command now return migration list from early to latest migration
+  * Status command now return migration list sorted from early to latest migration
   * Option "--length" of command "status" may limit list by last revisions
   * Improved test environment
 
