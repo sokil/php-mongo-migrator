@@ -1,6 +1,6 @@
 <?php
 
-class InititalRevision extends \Sokil\Mongo\Migrator\AbstractMigration
+class InitialRevision extends \Sokil\Mongo\Migrator\AbstractMigration
 {
     public function up()
     {

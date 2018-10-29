@@ -52,9 +52,9 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $revision = current($availableRevisions);
         $this->assertInstanceOf('\Sokil\Mongo\Migrator\Revision', $revision);
         
-        $this->assertEquals('20140531201029', $revision->getId());
-        $this->assertEquals('Test5', $revision->getName());
-        $this->assertEquals('20140531201029_Test5.php', $revision->getFilename());
+        $this->assertEquals('20140531183810', $revision->getId());
+        $this->assertEquals('InitialRevision', $revision->getName());
+        $this->assertEquals('20140531183810_InitialRevision.php', $revision->getFilename());
     }
 
     public function testGetClient()
