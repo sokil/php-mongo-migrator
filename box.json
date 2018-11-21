@@ -26,5 +26,7 @@
     "output": "build/mongo-migrator.phar",
     "stub": true,
     "compactors": "Herrera\\Box\\Compactor\\Php",
-    "compression": "GZ"
+    "compression": "GZ",
+    "algorithm": "OPENSSL",
+    "key": "./private.pem"
 }

@@ -9,11 +9,11 @@ endif
 
 build: check_box_installed
 	mkdir -p build
-	composer.phar update --no-dev -o
+	composer update --no-dev -o
 	box build -v
 
 dev:
-	composer.phar update -o
+	composer update -o
 
 clean:
 	rm -rf ./vendor

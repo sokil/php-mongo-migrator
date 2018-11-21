@@ -3,3 +3,4 @@ composer.lock
 share
 build
 !build/.gitkeep
+private.pem

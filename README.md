@@ -307,7 +307,16 @@ Building Phar
 -------------
 
 1) Install box using manual at https://github.com/box-project/box2
-2) Build phar
+2) Check that `composer` and `box` accessible in PATH
+3) You need to have own private key to build you own phar. 
+Copy it with name `private.pem` to the root dir near `box.json` or generate new one:
+```
+# Generate new one:
+openssl genrsa -des3 -out private.pem 4096
+# If you want to remove passphrase
+openssl rsa -in private.pem -out private.pem
+```
+4) Build phar
 ```
 make
 ````
