@@ -11,6 +11,7 @@ build: check_box_installed
 	mkdir -p build
 	composer update --no-dev -o
 	box build -v
+	gpg -u dmytro.sokil@gmail.com --detach-sign --output build/mongo-migrator.phar.asc build/mongo-migrator.phar
 
 dev:
 	composer update -o
