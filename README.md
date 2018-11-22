@@ -312,12 +312,16 @@ Building Phar
 -------------
 
 1) Install box using manual at https://github.com/box-project/box2. It must be accessible as `box`
+
 2) Check that `composer` installed and accessible in PATH
-3) You may build phar in three modes: unsigned version, signed by OPENSSH (for self test on run) and signed by GPG (for installation through phive) 
+
+3) You may build phar in three modes: unsigned version, signed by OPENSSH (for self test on run) and signed by GPG (for installation through phive)
+ 
 3.1) To build unsigned version just run make
 ```
 make
 ````
+
 3.2) To build phar signed with OPENSSH, you need to have own private key. 
 Copy it to `./keys/private.pem` or generate new one:
 ```
