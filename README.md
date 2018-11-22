@@ -341,6 +341,16 @@ Then build GPG-signed phar:
 make gpg-signed
 ````
 
+You may verify phar by public key:
+```
+$ gpg --verify mongo-migrator.phar.asc mongo-migrator.phar
+gpg: Signature made чт, 22-лис-2018 23:27:46 +0200 EET
+gpg:                using RSA key F530929F7ED528F0
+gpg:                issuer "dmytro.sokil@gmail.com"
+gpg: Good signature from "Dmytro Sokil <dmytro.sokil@gmail.com>" [ultimate]
+
+```
+
 Development
 -----------
 
