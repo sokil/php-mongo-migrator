@@ -49,6 +49,12 @@ Run in shell:
 wget http://phpmongokit.github.io/dists/mongo-migrator.phar && chmod +x mongo-migrator.phar && sudo mv mongo-migrator.phar /usr/local/bin
 ```
 
+#### Install using phive
+
+```
+phive install sokil/php-mongo-migrator
+```
+
 #### Compatibility with PHP 7
 
 > PHPMongo currently based on old [ext-mongo](https://pecl.php.net/package/mongo) entension.
