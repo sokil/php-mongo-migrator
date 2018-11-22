@@ -44,6 +44,7 @@ services:
       - mongodb34
     volumes:
       - ..:/phpmongo
+      - ./php.ini:/usr/local/etc/php/php.ini
     environment:
       PHP_IDE_CONFIG: "serverName=phpmongo"
       XDEBUG_CONFIG: "idekey=PHPSTORM remote_autostart=1 remote_enable=1 remote_host=dockerhost remote_port=9001"

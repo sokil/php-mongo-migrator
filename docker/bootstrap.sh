@@ -9,13 +9,18 @@ if [[ -z $(dpkg -l | grep libssl-dev) ]];
 then
     # add library requirements
     apt-get update
-    apt-get install --no-install-recommends -y libssl-dev zip
+    apt-get install --no-install-recommends -y \
+        libssl-dev \
+        zip \
+        gpg \
+        git
 
     # install pecl mongo
     yes '' | pecl install mongo-1.6.2
     docker-php-ext-enable mongo.so
 
     # install ext-zip
+    apt-get install --no-install-recommends -y zlib1g-dev
     docker-php-ext-install zip
 
     # XDEBUG
@@ -41,6 +46,9 @@ then
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
     # update composer dependencies
     composer update --no-interaction --prefer-dist
+    # install box
+    curl -LSs https://box-project.github.io/box2/installer.php | php
+    mv box.phar /usr/local/bin/box
 fi
 
 # wait commands

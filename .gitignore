@@ -1,6 +1,5 @@
-vendor
 composer.lock
-share
-build
-!build/.gitkeep
-private.pem
+vendor/
+share/
+build/
+keys/

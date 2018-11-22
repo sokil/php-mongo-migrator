@@ -1,4 +1,6 @@
-default: build
+default: unsigned
+
+GPG_KEY_ID="dmytro.sokil@gmail.com"
 
 BOX_INSTALLED=$(box --version 2> /dev/null)
 
@@ -7,15 +9,28 @@ ifndef BOX_INSTALLED
 	$(error "box not installed")
 endif
 
-build: check_box_installed
+pre-build:
+	rm -rf ./build
 	mkdir -p build
-	composer update --no-dev -o
+	composer install --no-dev --prefer-dist -o
+
+unsigned: pre-build
+	cat box.json | sed -E 's/\"key\": \".+\",//g' | sed -E 's/\"algorithm\": \".+\",//g' > box.unsigned.json
+	box build -v -c box.unsigned.json
+	rm -f box.unsigned.json
+
+gpg-signed: unsigned
+	gpg --import keys/private.asc
+	gpg -u $(GPG_KEY_ID) --detach-sign --output build/mongo-migrator.phar.asc build/mongo-migrator.phar
+
+openssl-signed: pre-build
 	box build -v
-	gpg -u dmytro.sokil@gmail.com --detach-sign --output build/mongo-migrator.phar.asc build/mongo-migrator.phar
 
 dev:
-	composer update -o
+	composer update --prefer-dist -o
 
 clean:
+	rm -f box.unsigned.json
+	rm -f composer.lock
 	rm -rf ./vendor
 	rm -rf ./build

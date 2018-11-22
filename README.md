@@ -35,7 +35,6 @@ Installation
 
 #### Install locally through composer
 
-
 ```
 composer require sokil/php-mongo-migrator
 ```
@@ -312,19 +311,34 @@ class RevisionName extends \Sokil\Mongo\Migrator\AbstractMigration
 Building Phar
 -------------
 
-1) Install box using manual at https://github.com/box-project/box2
-2) Check that `composer` and `box` accessible in PATH
-3) You need to have own private key to build you own phar. 
-Copy it with name `private.pem` to the root dir near `box.json` or generate new one:
+1) Install box using manual at https://github.com/box-project/box2. It must be accessible as `box`
+2) Check that `composer` installed and accessible in PATH
+3) You may build phar in three modes: unsigned version, signed by OPENSSH (for self test on run) and signed by GPG (for installation through phive) 
+3.1) To build unsigned version just run make
+```
+make
+````
+3.2) To build phar signed with OPENSSH, you need to have own private key. 
+Copy it to `./keys/private.pem` or generate new one:
 ```
 # Generate new one:
 openssl genrsa -des3 -out private.pem 4096
 # If you want to remove passphrase
 openssl rsa -in private.pem -out private.pem
 ```
-4) Build phar
+Then build phar:
 ```
-make
+make openssh-signed
+````
+
+3.3) To build phar sighen with GPG for phive, you need to place private key to `./keys/private.ask`:
+```
+gpg --gen-key
+gpg --export-secret-keys your@mail.com > keys/private.asc
+```
+Then build GPG-signed phar:
+```
+make gpg-signed
 ````
 
 Development
