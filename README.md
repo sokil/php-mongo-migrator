@@ -41,13 +41,6 @@ composer require sokil/php-mongo-migrator
 
 After installation you will be able to run commands in console by running ./vendor/bin/mongo-migrator command.
 
-#### Install phar
-
-Run in shell:
-```
-wget http://phpmongokit.github.io/dists/mongo-migrator.phar && chmod +x mongo-migrator.phar && sudo mv mongo-migrator.phar /usr/local/bin
-```
-
 #### Install using phive
 
 ```
