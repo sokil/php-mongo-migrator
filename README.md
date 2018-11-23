@@ -322,6 +322,8 @@ Copy it to `./keys/private.pem` or generate new one:
 openssl genrsa -des3 -out private.pem 4096
 # If you want to remove passphrase
 openssl rsa -in private.pem -out private.pem
+# generate public
+openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 ```
 Then build phar:
 ```
