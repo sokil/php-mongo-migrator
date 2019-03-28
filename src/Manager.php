@@ -372,6 +372,9 @@ class Manager
     private function isLockedRevision($environment, $revision, $event)
     {
         $maxTimeLock = $this->config->getMaxTimeLock();
+        if (empty($maxTimeLock)) {
+            return false;
+        }
         $revisionDoc = $this->getLogCollection($environment)
             ->find()->where('revision', $revision->getId())->one();
         $revisionedTime = $revisionDoc->date->sec;
