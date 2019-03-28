@@ -46,6 +46,8 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
 
         $specifiedRev = $input->getOption('specifiedRevision');
 
+        $maxTimeLock = $this->getConfig()->getMaxTimeLock();
+
         if (!$environment) {
             $environment = $this->getConfig()->getDefaultEnvironment();
         }
@@ -60,6 +62,13 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
             })
             ->onRollbackRevision(function (ApplyRevisionEvent $event) use ($output) {
                 $output->writeln('done.');
+            })
+            ->onRollbackError(function (ApplyRevisionEvent $event) use ($output) {
+                $revision = $event->getRevision();
+                $output->writeln(
+                    'Error on revision <info>' . $revision->getId() . '</info> ' . $revision->getName() .
+                    '. Perhaps the revision is stale? '
+                );
             })
             ->rollback($revision, $environment, $specifiedRev);
     }

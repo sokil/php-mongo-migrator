@@ -110,6 +110,11 @@ class Config
         return $this->get('default_environment');
     }
 
+    public function getMaxTimeLock()
+    {
+        return $this->get('max_time_lock');
+    }
+
     /**
      * @param string|null $environment
      *

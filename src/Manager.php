@@ -329,8 +329,12 @@ class Manager
                     break;
                 }
 
+
                 $event = new ApplyRevisionEvent();
                 $event->setRevision($revision);
+                if ($this->isLockedRevision($environment, $revision, $event)) {
+                    break;
+                }
 
                 $this->eventDispatcher->dispatch('before_rollback_revision', $event);
 
@@ -342,7 +346,6 @@ class Manager
                 $migration = new $className($this->getClient($environment));
                 $migration->setEnvironment($environment);
                 $migration->down();
-
                 $this->logDown($revision->getId(), $environment);
 
                 $this->eventDispatcher->dispatch('rollback_revision', $event);
@@ -359,6 +362,24 @@ class Manager
 
         // clear cached applied revisions
         unset($this->appliedRevisions[$environment]);
+    }
+
+    /**
+     * @param string $environment
+     * @param Revision $revision
+     * @param ApplyRevisionEvent $event
+     */
+    private function isLockedRevision($environment, $revision, $event)
+    {
+        $maxTimeLock = $this->config->getMaxTimeLock();
+        $revisionDoc = $this->getLogCollection($environment)
+            ->find()->where('revision', $revision->getId())->one();
+        $revisionedTime = $revisionDoc->date->sec;
+        if (strtotime($maxTimeLock) > $revisionedTime) {
+            $this->eventDispatcher->dispatch('rollback_error', $event);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -480,6 +501,18 @@ class Manager
     public function onRollbackRevision($listener)
     {
         $this->eventDispatcher->addListener('rollback_revision', $listener);
+
+        return $this;
+    }
+
+    /**
+    * @param callable $listener
+    *
+    * @return self
+    */
+    public function onRollbackError($listener)
+    {
+        $this->eventDispatcher->addListener('rollback_error', $listener);
 
         return $this;
     }
