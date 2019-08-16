@@ -23,18 +23,18 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      *
      * @return \Sokil\Mongo\Migrator\Config
      */
-    protected function getConfig()
+    protected function getConfig($path = '')
     {
         if (!$this->config) {
-            $this->config = new Config($this->readConfig());
+            $this->config = new Config($this->readConfig($path));
         }
-        
+
         return $this->config;
     }
     
-    private function readConfig()
+    private function readConfig($path)
     {
-        $filename = $this->getProjectRoot() . '/' . self::CONFIG_FILENAME;
+        $filename = sprintf("%s/%s/%s", $this->getProjectRoot(), $path, self::CONFIG_FILENAME);
 
         $yamlFilename = $filename . '.yaml';
         if (file_exists($yamlFilename)) {

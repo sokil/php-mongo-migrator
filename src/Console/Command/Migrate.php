@@ -27,6 +27,12 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
                 InputOption::VALUE_OPTIONAL,
                 'Environment name'
             )
+            ->addOption(
+                '--configuration',
+                '-c',
+                InputOption::VALUE_OPTIONAL,
+                'Configuration path'
+            )
             ->setHelp('Migrate to specific revision of database');
     }
     
@@ -37,8 +43,10 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
         
         // environment
         $environment = $input->getOption('environment');
+        $configPath = $input->getOption('configuration');
+
         if (!$environment) {
-            $environment = $this->getConfig()->getDefaultEnvironment();
+            $environment = $this->getConfig($configPath)->getDefaultEnvironment();
         }
         
         $output->writeln('Environment: <comment>' . $environment . '</comment>');
