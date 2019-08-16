@@ -9,12 +9,6 @@
             "email": "dmytro.sokil@gmail.com"
         }
     ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/khaydarov/php-mongo-migrator"
-        }
-    ],
     "require": {
         "php": ">=5.4 || ^7.0",
         "sokil/php-mongo": "1.*",
