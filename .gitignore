@@ -3,5 +3,3 @@ vendor/
 share/
 build/
 keys/
-.idea/
-.php_cs.cache
