@@ -34,7 +34,7 @@ class Init extends \Sokil\Mongo\Migrator\Console\Command
         // check permissions
         $configPath = $this->getProjectRoot();
         if (!is_writable($this->getProjectRoot())) {
-            throw new \Exception('Directory ' . $configPath . ' must be writeabe');
+            throw new \Exception('Directory ' . $configPath . ' must be writeable');
         }
         
         $configFormat = $input->getOption('configFormat');

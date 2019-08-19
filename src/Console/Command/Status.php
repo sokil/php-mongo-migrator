@@ -26,6 +26,12 @@ class Status extends \Sokil\Mongo\Migrator\Console\Command
                 InputOption::VALUE_OPTIONAL,
                 'Limit list by number of last revisions. If not set, show all revisions.'
             )
+            ->addOption(
+                '--configuration',
+                '-c',
+                InputOption::VALUE_OPTIONAL,
+                'Configuration path'
+            )
             ->setHelp('Show list of migrations with status of applying');
     }
 
@@ -39,6 +45,12 @@ class Status extends \Sokil\Mongo\Migrator\Console\Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // config file path
+        $configPath = $input->getOption('configuration');
+        if ($configPath) {
+            $this->setConfigPath($configPath);
+        }
+
         // length of list
         $length = $input->getOption('length');
         if (empty($length)) {

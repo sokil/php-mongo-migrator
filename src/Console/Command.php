@@ -9,8 +9,16 @@ use Symfony\Component\Yaml\Yaml;
 
 abstract class Command extends \Symfony\Component\Console\Command\Command
 {
+    /**
+     * @var Config
+     */
     private $config;
-    
+
+    /**
+     * @var string
+     */
+    private $path;
+
     /**
      *
      * @var \Sokil\Mongo\Migrator\Manager
@@ -18,23 +26,59 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     private $manager;
     
     const CONFIG_FILENAME = 'mongo-migrator';
-    
+
+    /**
+     * @param $path
+     */
+    protected function setConfigPath($path)
+    {
+        $this->path = $path;
+    }
+
     /**
      *
      * @return \Sokil\Mongo\Migrator\Config
      */
-    protected function getConfig($path = '')
+    protected function getConfig()
     {
         if (!$this->config) {
-            $this->config = new Config($this->readConfig($path));
+            $this->config = new Config($this->readConfig());
         }
 
         return $this->config;
     }
     
-    private function readConfig($path)
+    private function readConfig()
     {
-        $filename = sprintf("%s/%s/%s", $this->getProjectRoot(), $path, self::CONFIG_FILENAME);
+        if (!empty($this->path)) {
+            return $this->readCustomConfig();
+        }
+
+        return $this->readDefaultConfig();
+    }
+
+    private function readCustomConfig()
+    {
+        if (!file_exists($this->path)) {
+            throw new ConfigurationNotFound('Config not found');
+        }
+
+        $pathParts = pathinfo($this->path);
+
+        if ($pathParts['extension'] === 'yaml') {
+            return Yaml::parse(file_get_contents($this->path));
+        }
+
+        if ($pathParts['extension'] === 'php') {
+            return require($this->path);
+        }
+
+        throw new ConfigurationNotFound('Config file must have yaml or php extension');
+    }
+
+    private function readDefaultConfig()
+    {
+        $filename = sprintf("%s/%s", $this->getProjectRoot(), self::CONFIG_FILENAME);
 
         $yamlFilename = $filename . '.yaml';
         if (file_exists($yamlFilename)) {
@@ -45,7 +89,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
         if (file_exists($phpFilename)) {
             return require($phpFilename);
         }
-        
+
         throw new ConfigurationNotFound('Config not found');
     }
 
@@ -82,6 +126,14 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     {
         return getcwd();
     }
+
+    /**
+     * @return string
+     */
+    public function getConfigPath()
+    {
+        return $this->path;
+    }
     
     /**
      *
@@ -90,7 +142,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     public function getManager()
     {
         if (!$this->manager) {
-            $this->manager = new Manager($this->getConfig(), $this->getProjectRoot());
+            $this->manager = new Manager($this->getConfig(), $this->getConfigPath(), $this->getProjectRoot());
         }
         
         return $this->manager;

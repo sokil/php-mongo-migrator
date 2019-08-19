@@ -40,13 +40,18 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
     {
         // version
         $revision = $input->getOption('revision');
-        
+
+        // config file path
+        $configPath = $input->getOption('configuration');
+        if ($configPath) {
+            $this->setConfigPath($configPath);
+        }
+
         // environment
         $environment = $input->getOption('environment');
-        $configPath = $input->getOption('configuration');
 
         if (!$environment) {
-            $environment = $this->getConfig($configPath)->getDefaultEnvironment();
+            $environment = $this->getConfig()->getDefaultEnvironment();
         }
         
         $output->writeln('Environment: <comment>' . $environment . '</comment>');

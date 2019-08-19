@@ -27,6 +27,12 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
                 InputOption::VALUE_OPTIONAL,
                 'Environment name'
             )
+            ->addOption(
+                '--configuration',
+                '-c',
+                InputOption::VALUE_OPTIONAL,
+                'Configuration path'
+            )
             ->setHelp('Rollback to specific revision of database');
     }
     
@@ -34,6 +40,12 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
     {
         // version
         $revision = $input->getOption('revision');
+
+        // config file path
+        $configPath = $input->getOption('configuration');
+        if ($configPath) {
+            $this->setConfigPath($configPath);
+        }
         
         // environment
         $environment = $input->getOption('environment');

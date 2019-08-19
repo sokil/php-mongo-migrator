@@ -21,6 +21,11 @@ class Manager
      * @var string
      */
     private $rootDir;
+
+    /**
+     * @var string
+     */
+    private $configPath;
     
     /**
      * @var Client
@@ -41,11 +46,18 @@ class Manager
      * @var EventDispatcher
      */
     private $eventDispatcher;
-    
-    public function __construct(Config $config, $rootDir)
+
+    /**
+     * Manager constructor.
+     * @param Config $config
+     * @param string $configPath
+     * @param string $rootDir
+     */
+    public function __construct(Config $config, $configPath, $rootDir)
     {
         $this->config = $config;
         $this->rootDir = $rootDir;
+        $this->configPath = $configPath;
         $this->eventDispatcher = new EventDispatcher;
     }
     
@@ -77,7 +89,12 @@ class Manager
         if ($migrationsDir[0] === '/') {
             return $migrationsDir;
         }
-        
+
+        if (!empty($this->configPath)) {
+            $pathParts = pathinfo($this->configPath);
+            return $pathParts['dirname'] . '/' . rtrim($migrationsDir, '/');
+        }
+
         return $this->rootDir . '/' . rtrim($migrationsDir, '/');
     }
 
@@ -250,7 +267,7 @@ class Manager
     protected function executeMigration($targetRevision, $environment, $direction)
     {
         $this->eventDispatcher->dispatch('start');
-        
+
         // get last applied migration
         $latestRevisionId = $this->getLatestAppliedRevisionId($environment);
         
@@ -274,6 +291,7 @@ class Manager
                 $this->eventDispatcher->dispatch('before_migrate_revision', $event);
 
                 $revisionPath = $this->getMigrationsDir() . '/' . $revision->getFilename();
+                var_dump($revisionPath);die;
                 require_once $revisionPath;
 
                 $className = $revision->getName();
