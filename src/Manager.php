@@ -23,11 +23,6 @@ class Manager
     private $rootDir;
 
     /**
-     * @var string
-     */
-    private $configPath;
-    
-    /**
      * @var Client
      */
     private $client;
@@ -50,7 +45,6 @@ class Manager
     /**
      * Manager constructor.
      * @param Config $config
-     * @param string $configPath
      * @param string $rootDir
      */
     public function __construct(Config $config, $rootDir)
@@ -87,11 +81,6 @@ class Manager
         $migrationsDir = $this->config->getMigrationsDir();
         if ($migrationsDir[0] === '/') {
             return $migrationsDir;
-        }
-
-        if (!empty($this->configPath)) {
-            $pathParts = pathinfo($this->configPath);
-            return $pathParts['dirname'] . '/' . rtrim($migrationsDir, '/');
         }
 
         return $this->rootDir . '/' . rtrim($migrationsDir, '/');
