@@ -45,12 +45,6 @@ class Status extends \Sokil\Mongo\Migrator\Console\Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // config file path
-        $configPath = $input->getOption('configuration');
-        if ($configPath) {
-            $this->setConfigPath($configPath);
-        }
-
         // length of list
         $length = $input->getOption('length');
         if (empty($length)) {

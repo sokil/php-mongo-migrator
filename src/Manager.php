@@ -53,11 +53,10 @@ class Manager
      * @param string $configPath
      * @param string $rootDir
      */
-    public function __construct(Config $config, $configPath, $rootDir)
+    public function __construct(Config $config, $rootDir)
     {
         $this->config = $config;
         $this->rootDir = $rootDir;
-        $this->configPath = $configPath;
         $this->eventDispatcher = new EventDispatcher;
     }
     
@@ -291,7 +290,6 @@ class Manager
                 $this->eventDispatcher->dispatch('before_migrate_revision', $event);
 
                 $revisionPath = $this->getMigrationsDir() . '/' . $revision->getFilename();
-                var_dump($revisionPath);die;
                 require_once $revisionPath;
 
                 $className = $revision->getName();

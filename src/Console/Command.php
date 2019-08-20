@@ -5,6 +5,8 @@ namespace Sokil\Mongo\Migrator\Console;
 use Sokil\Mongo\Migrator\Config;
 use Sokil\Mongo\Migrator\Console\Exception\ConfigurationNotFound;
 use Sokil\Mongo\Migrator\Manager;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
 abstract class Command extends \Symfony\Component\Console\Command\Command
@@ -15,11 +17,6 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     private $config;
 
     /**
-     * @var string
-     */
-    private $path;
-
-    /**
      *
      * @var \Sokil\Mongo\Migrator\Manager
      */
@@ -28,16 +25,23 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     const CONFIG_FILENAME = 'mongo-migrator';
 
     /**
-     * @param $path
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @throws ConfigurationNotFound
      */
-    protected function setConfigPath($path)
+    protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $this->path = $path;
+        // config file path
+        $configPath = $input->getOption('configuration');
+
+        if (!empty($configPath)) {
+            $this->config = new Config($this->readConfig($configPath));
+        }
     }
 
     /**
-     *
      * @return \Sokil\Mongo\Migrator\Config
+     * @throws ConfigurationNotFound
      */
     protected function getConfig()
     {
@@ -47,38 +51,20 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
 
         return $this->config;
     }
-    
-    private function readConfig()
+
+    /**
+     * @param string $path
+     * @return mixed
+     * @throws ConfigurationNotFound
+     */
+    private function readConfig($path = '')
     {
-        if (!empty($this->path)) {
-            return $this->readCustomConfig();
+        if (!empty($path) && file_exists($path)) {
+            $pathParts = pathinfo($path);
+            $filename = sprintf("%s/%s", $pathParts['dirname'], $pathParts['filename']);
+        } else {
+            $filename = sprintf("%s/%s", $this->getProjectRoot(), self::CONFIG_FILENAME);
         }
-
-        return $this->readDefaultConfig();
-    }
-
-    private function readCustomConfig()
-    {
-        if (!file_exists($this->path)) {
-            throw new ConfigurationNotFound('Config not found');
-        }
-
-        $pathParts = pathinfo($this->path);
-
-        if ($pathParts['extension'] === 'yaml') {
-            return Yaml::parse(file_get_contents($this->path));
-        }
-
-        if ($pathParts['extension'] === 'php') {
-            return require($this->path);
-        }
-
-        throw new ConfigurationNotFound('Config file must have yaml or php extension');
-    }
-
-    private function readDefaultConfig()
-    {
-        $filename = sprintf("%s/%s", $this->getProjectRoot(), self::CONFIG_FILENAME);
 
         $yamlFilename = $filename . '.yaml';
         if (file_exists($yamlFilename)) {
@@ -128,21 +114,13 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     }
 
     /**
-     * @return string
-     */
-    public function getConfigPath()
-    {
-        return $this->path;
-    }
-    
-    /**
      *
      * @return \Sokil\Mongo\Migrator\Manager
      */
     public function getManager()
     {
         if (!$this->manager) {
-            $this->manager = new Manager($this->getConfig(), $this->getConfigPath(), $this->getProjectRoot());
+            $this->manager = new Manager($this->getConfig(), $this->getProjectRoot());
         }
         
         return $this->manager;

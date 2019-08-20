@@ -39,12 +39,6 @@ class Create extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // config file path
-        $configPath = $input->getOption('configuration');
-        if ($configPath) {
-            $this->setConfigPath($configPath);
-        }
-
         $className = $input->getArgument('name');
         if (!$className) {
             throw new \Exception('Name not specified');
