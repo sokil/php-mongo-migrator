@@ -2,19 +2,22 @@
 
 namespace Sokil\Mongo\Migrator\Console\Command;
 
+use Sokil\Mongo\Migrator\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Sokil\Mongo\Migrator\Event\ApplyRevisionEvent;
 
-class Migrate extends \Sokil\Mongo\Migrator\Console\Command
+class Migrate extends AbstractCommand
 {
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName('migrate')
             ->setDescription('Migrate to specific revision of database')
+            ->setHelp('Migrate to specific revision of database')
             ->addOption(
                 '--revision',
                 '-r',
@@ -26,8 +29,7 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
                 '-e',
                 InputOption::VALUE_OPTIONAL,
                 'Environment name'
-            )
-            ->setHelp('Migrate to specific revision of database');
+            );
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)

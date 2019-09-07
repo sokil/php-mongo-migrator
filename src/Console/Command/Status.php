@@ -3,14 +3,17 @@
 namespace Sokil\Mongo\Migrator\Console\Command;
 
 use Sokil\Mongo\Exception;
+use Sokil\Mongo\Migrator\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-class Status extends \Sokil\Mongo\Migrator\Console\Command
+class Status extends AbstractCommand
 {
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName('status')
             ->setDescription('Show status of migrations')

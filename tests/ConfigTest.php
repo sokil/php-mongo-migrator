@@ -3,7 +3,7 @@
 namespace Sokil\Mongo\Migrator;
 
 use Symfony\Component\Yaml\Yaml;
-use Sokil\Mongo\Migrator\Console\Command;
+use Sokil\Mongo\Migrator\Console\AbstractCommand;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
@@ -11,7 +11,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     
     public function setUp()
     {
-        $configFile = __DIR__ . '/' . Command::CONFIG_FILENAME . '.yaml';
+        $configFile = __DIR__ . '/' . AbstractCommand::DEFAULT_CONFIG_FILENAME . '.yaml';
         $this->config = new Config(Yaml::parse(file_get_contents($configFile)));
     }
     

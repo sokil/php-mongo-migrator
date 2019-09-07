@@ -2,16 +2,18 @@
 
 namespace Sokil\Mongo\Migrator\Console\Command;
 
+use Sokil\Mongo\Migrator\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Sokil\Mongo\Migrator\Event\ApplyRevisionEvent;
 
-class Rollback extends \Sokil\Mongo\Migrator\Console\Command
+class Rollback extends AbstractCommand
 {
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName('rollback')
             ->setDescription('Rollback to specific version of database')
