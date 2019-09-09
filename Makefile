@@ -12,6 +12,7 @@ endif
 pre-build:
 	rm -rf ./build
 	mkdir -p build
+	rm -f composer.lock
 	composer install --no-dev --prefer-dist -o
 
 unsigned: pre-build
