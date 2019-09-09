@@ -43,7 +43,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
     public function testGetConnectOptions()
     {
-        $this->assertEquals(array('replicaSet' => 'testrs'), $this->config->getConnectOptions('development'));
+        $this->assertEquals(array('replicaSet' => 'testrs'), $this->config->getConnectOptions('development-replicaset'));
         $this->assertEquals(array(), $this->config->getConnectOptions('staging'));
     }
     
