@@ -82,6 +82,21 @@ class Manager
     }
 
     /**
+     * Creates directory for migrations
+     */
+    public function createMigrationsDir()
+    {
+        // create migrations dir
+        $migrationsDirectory = $this->getMigrationsDir();
+
+        if (!file_exists($migrationsDirectory)) {
+            if (!mkdir($migrationsDirectory, 0755, true)) {
+                throw new \Exception('Can\'t create migrations directory ' . $migrationsDirectory);
+            }
+        }
+    }
+
+    /**
      * @param int|null $limit If specified, get only last revisions
      *
      * @return Revision[]
@@ -492,5 +507,13 @@ class Manager
         $this->eventDispatcher->addListener('stop', $listener);
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultEnvironment()
+    {
+        return $this->config->getDefaultEnvironment();
     }
 }

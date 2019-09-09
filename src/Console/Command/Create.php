@@ -3,11 +3,12 @@
 namespace Sokil\Mongo\Migrator\Console\Command;
 
 use Sokil\Mongo\Migrator\Console\AbstractCommand;
+use Sokil\Mongo\Migrator\Console\ManagerAwareCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Create extends AbstractCommand
+class Create extends AbstractCommand implements ManagerAwareCommandInterface
 {
     protected function configure()
     {

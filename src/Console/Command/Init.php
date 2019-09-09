@@ -2,6 +2,7 @@
 
 namespace Sokil\Mongo\Migrator\Console\Command;
 
+use Sokil\Mongo\Migrator\ManagerBuilder;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,9 +24,9 @@ class Init extends AbstractCommand
                 InputOption::VALUE_OPTIONAL,
                 sprintf(
                     'Format of config (use one of "%s"). Must be skipped if --configuration parameter specified.',
-                    implode('","', self::ALLOWED_CONFIG_FORMATS)
+                    implode('","', ManagerBuilder::ALLOWED_CONFIG_FORMATS)
                 ),
-                self::FORMAT_YAML
+                ManagerBuilder::FORMAT_YAML
             )
             ->addOption(
                 '--configuration',
@@ -51,14 +52,14 @@ class Init extends AbstractCommand
             $configurationPath = sprintf(
                 '%s/%s.%s',
                 $this->getProjectRoot(),
-                self::DEFAULT_CONFIG_FILENAME,
+                ManagerBuilder::DEFAULT_CONFIG_FILENAME,
                 $configFormat
             );
         } else {
             $configFormat = pathinfo($configurationPath, PATHINFO_EXTENSION);
         }
 
-        if (!in_array($configFormat, self::ALLOWED_CONFIG_FORMATS)) {
+        if (!in_array($configFormat, ManagerBuilder::ALLOWED_CONFIG_FORMATS)) {
             throw new \Exception('Config format "' . $configFormat . '" not allowed');
         }
 
@@ -72,7 +73,7 @@ class Init extends AbstractCommand
         }
 
         // copy config to target path
-        $configPatternPath = __DIR__ . '/../../../templates/' . self::DEFAULT_CONFIG_FILENAME . '.' . $configFormat;
+        $configPatternPath = __DIR__ . '/../../../templates/' . ManagerBuilder::DEFAULT_CONFIG_FILENAME . '.' . $configFormat;
         if (!copy($configPatternPath, $configurationPath)) {
             throw new \Exception('Can\'t write config to target directory <info>' . $configurationPath . '</info>');
         }
@@ -83,16 +84,18 @@ class Init extends AbstractCommand
                 $configurationPath
             )
         );
+
+        // init manager
+        $this->initialiseManager($configurationPath);
+
+        // create directory for migrations
+        $this->getManager()->createMigrationsDir();
         
-        // create migrations dir
-        $migrationsDirectory = $this->getManager()->getMigrationsDir();
-        
-        if (!file_exists($migrationsDirectory)) {
-            if (!mkdir($migrationsDirectory, 0755, true)) {
-                throw new \Exception('Can\'t create migrations directory ' . $migrationsDirectory);
-            }
-        }
-        
-        $output->writeln('Directory for migrations created at <info>' . $migrationsDirectory . '</info>');
+        $output->writeln(
+            sprintf(
+                'Directory for migrations created at <info>%s</info>',
+                $this->getManager()->getMigrationsDir()
+            )
+        );
     }
 }

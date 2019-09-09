@@ -2,50 +2,39 @@
 
 namespace Sokil\Mongo\Migrator\Console;
 
+use Sokil\Mongo\Migrator\ManagerBuilder;
 use Symfony\Component\Console\Command\Command;
-use Sokil\Mongo\Migrator\Config;
-use Sokil\Mongo\Migrator\Console\Exception\ConfigurationNotFound;
 use Sokil\Mongo\Migrator\Manager;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Yaml\Yaml;
 
 abstract class AbstractCommand extends Command
 {
-    const FORMAT_YAML = 'yaml';
-    const FORMAT_PHP = 'php';
-
     /**
-     * @var array
-     */
-    const ALLOWED_CONFIG_FORMATS = array(
-        self::FORMAT_YAML,
-        self::FORMAT_PHP,
-    );
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     *
-     * @var \Sokil\Mongo\Migrator\Manager
+     * @var Manager
      */
     private $manager;
-    
-    const DEFAULT_CONFIG_FILENAME = 'mongo-migrator';
 
     protected function configure()
     {
         parent::configure();
 
-        if ($this instanceof ConfigurationAwareInterface) {
+        if ($this instanceof ManagerAwareCommandInterface) {
             $this->addOption(
                 '--configuration',
                 '-c',
                 InputOption::VALUE_REQUIRED,
                 'The configuration file'
+            );
+        }
+
+        if ($this instanceof EnvironmentRelatedCommandInterface) {
+            $this->addOption(
+                '--environment',
+                '-e',
+                InputOption::VALUE_OPTIONAL,
+                'Environment name'
             );
         }
     }
@@ -58,77 +47,26 @@ abstract class AbstractCommand extends Command
     {
         parent::initialize($input, $output);
 
-        if ($this instanceof ConfigurationAwareInterface) {
+        if ($this instanceof ManagerAwareCommandInterface) {
             // get path to configuration
             $configurationPath = $input->getOption('configuration');
 
-            if (empty($configurationPath)) {
-                $configurationPath = $this->locateDefaultConfigurationPath();
-            }
-
-            // load configuration
-            $this->config = $this->loadConfiguration($configurationPath);
+            $this->initialiseManager($configurationPath);
         }
     }
 
     /**
-     * @return string
+     * @param null|string $configurationPath
      */
-    private function locateDefaultConfigurationPath()
+    protected function initialiseManager($configurationPath = null)
     {
-        $filename = $this->getProjectRoot() . '/' . self::DEFAULT_CONFIG_FILENAME;
+        $managerBuilder = new ManagerBuilder();
 
-        foreach (self::ALLOWED_CONFIG_FORMATS as $allowedConfigFormat) {
-            $configurationPath = sprintf('%s.%s', $filename, $allowedConfigFormat);
-            if (file_exists($configurationPath)) {
-                return $configurationPath;
-            }
-        }
-
-        throw new ConfigurationNotFound('Configuration not found');
-    }
-
-    /**
-     * @param string $configurationPath
-     *
-     * @return Config
-     *
-     * @throws ConfigurationNotFound
-     */
-    private function loadConfiguration($configurationPath)
-    {
-        // check if config readable
-        if (!is_readable($configurationPath)) {
-            throw new \InvalidArgumentException('Passed configuration path is not readable');
-        }
-
-        $configurationFormat = pathinfo($configurationPath, PATHINFO_EXTENSION);
-
-        switch ($configurationFormat) {
-            case self::FORMAT_YAML:
-                $configuration = Yaml::parse(file_get_contents($configurationPath));
-                break;
-            case self::FORMAT_PHP:
-                $configuration = require($configurationPath);
-                break;
-            default:
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Passed configuration path must be in one of allowed formats %s',
-                        implode(', ', self::ALLOWED_CONFIG_FORMATS)
-                    )
-                );
-        }
-
-        return new Config($configuration);
-    }
-
-    /**
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->config;
+        // create manager
+        $this->manager = $managerBuilder->build(
+            $this->getProjectRoot(),
+            $configurationPath
+        );
     }
 
     /**
@@ -143,14 +81,10 @@ abstract class AbstractCommand extends Command
     
     /**
      *
-     * @return \Sokil\Mongo\Migrator\Manager
+     * @return Manager
      */
     public function getManager()
     {
-        if (!$this->manager) {
-            $this->manager = new Manager($this->getConfig(), $this->getProjectRoot());
-        }
-        
         return $this->manager;
     }
 }
