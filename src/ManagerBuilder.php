@@ -98,6 +98,10 @@ class ManagerBuilder
                 );
         }
 
+        if (!is_array($configuration)) {
+            throw new \InvalidArgumentException('Invalid config format');
+        }
+
         return new Config($configuration);
     }
 }
