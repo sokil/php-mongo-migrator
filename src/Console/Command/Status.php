@@ -3,30 +3,31 @@
 namespace Sokil\Mongo\Migrator\Console\Command;
 
 use Sokil\Mongo\Exception;
+use Sokil\Mongo\Migrator\Console\AbstractCommand;
+use Sokil\Mongo\Migrator\Console\EnvironmentRelatedCommandInterface;
+use Sokil\Mongo\Migrator\Console\ManagerAwareCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-class Status extends \Sokil\Mongo\Migrator\Console\Command
+class Status extends AbstractCommand implements
+    ManagerAwareCommandInterface,
+    EnvironmentRelatedCommandInterface
 {
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName('status')
             ->setDescription('Show status of migrations')
-            ->addOption(
-                '--environment',
-                '-e',
-                InputOption::VALUE_OPTIONAL,
-                'Environment name'
-            )
+            ->setHelp('Show list of migrations with status of applying')
             ->addOption(
                 '--length',
                 '-l',
                 InputOption::VALUE_OPTIONAL,
                 'Limit list by number of last revisions. If not set, show all revisions.'
-            )
-            ->setHelp('Show list of migrations with status of applying');
+            );
     }
 
     /**
@@ -52,7 +53,7 @@ class Status extends \Sokil\Mongo\Migrator\Console\Command
         // environment
         $environment = $input->getOption('environment');
         if (!$environment) {
-            $environment = $this->getConfig()->getDefaultEnvironment();
+            $environment = $this->getManager()->getDefaultEnvironment();
         }
         
         $output->writeln('Environment: <comment>' . $environment . '</comment>');

@@ -12,12 +12,11 @@ addons:
 language: php
 php:
   - nightly
+  - 7.3
   - 7.2
   - 7.1
   - 7.0
   - 5.6
-  - 5.5
-  - 5.4
 
 matrix:
   allow_failures:

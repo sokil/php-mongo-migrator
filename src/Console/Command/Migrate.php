@@ -2,32 +2,32 @@
 
 namespace Sokil\Mongo\Migrator\Console\Command;
 
+use Sokil\Mongo\Migrator\Console\AbstractCommand;
+use Sokil\Mongo\Migrator\Console\EnvironmentRelatedCommandInterface;
+use Sokil\Mongo\Migrator\Console\ManagerAwareCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Sokil\Mongo\Migrator\Event\ApplyRevisionEvent;
 
-class Migrate extends \Sokil\Mongo\Migrator\Console\Command
+class Migrate extends AbstractCommand implements
+    ManagerAwareCommandInterface,
+    EnvironmentRelatedCommandInterface
 {
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName('migrate')
             ->setDescription('Migrate to specific revision of database')
+            ->setHelp('Migrate to specific revision of database')
             ->addOption(
                 '--revision',
                 '-r',
                 InputOption::VALUE_OPTIONAL,
                 'Revision of migration'
-            )
-            ->addOption(
-                '--environment',
-                '-e',
-                InputOption::VALUE_OPTIONAL,
-                'Environment name'
-            )
-            ->setHelp('Migrate to specific revision of database');
+            );
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -38,7 +38,7 @@ class Migrate extends \Sokil\Mongo\Migrator\Console\Command
         // environment
         $environment = $input->getOption('environment');
         if (!$environment) {
-            $environment = $this->getConfig()->getDefaultEnvironment();
+            $environment = $this->getManager()->getDefaultEnvironment();
         }
         
         $output->writeln('Environment: <comment>' . $environment . '</comment>');

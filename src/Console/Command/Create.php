@@ -2,24 +2,27 @@
 
 namespace Sokil\Mongo\Migrator\Console\Command;
 
+use Sokil\Mongo\Migrator\Console\AbstractCommand;
+use Sokil\Mongo\Migrator\Console\ManagerAwareCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
-use Sokil\Mongo\Migrator\Console\Command;
 
-class Create extends Command
+class Create extends AbstractCommand implements ManagerAwareCommandInterface
 {
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName('create')
             ->setDescription('Create new migration')
+            ->setHelp('Create new migration')
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
                 'Name of migration in CamelCase notation'
-            )
-            ->setHelp('Create new migration');
+            );
     }
 
     /**

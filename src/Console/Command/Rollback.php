@@ -2,16 +2,22 @@
 
 namespace Sokil\Mongo\Migrator\Console\Command;
 
+use Sokil\Mongo\Migrator\Console\AbstractCommand;
+use Sokil\Mongo\Migrator\Console\EnvironmentRelatedCommandInterface;
+use Sokil\Mongo\Migrator\Console\ManagerAwareCommandInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Sokil\Mongo\Migrator\Event\ApplyRevisionEvent;
 
-class Rollback extends \Sokil\Mongo\Migrator\Console\Command
+class Rollback extends AbstractCommand implements
+    ManagerAwareCommandInterface,
+    EnvironmentRelatedCommandInterface
 {
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName('rollback')
             ->setDescription('Rollback to specific version of database')
@@ -20,12 +26,6 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
                 '-r',
                 InputOption::VALUE_OPTIONAL,
                 'Revision of migration'
-            )
-            ->addOption(
-                '--environment',
-                '-e',
-                InputOption::VALUE_OPTIONAL,
-                'Environment name'
             )
             ->setHelp('Rollback to specific revision of database');
     }
@@ -38,7 +38,7 @@ class Rollback extends \Sokil\Mongo\Migrator\Console\Command
         // environment
         $environment = $input->getOption('environment');
         if (!$environment) {
-            $environment = $this->getConfig()->getDefaultEnvironment();
+            $environment = $this->getManager()->getDefaultEnvironment();
         }
         
         $output->writeln('Environment: <comment>' . $environment . '</comment>');

@@ -2,16 +2,18 @@
 
 namespace Sokil\Mongo\Migrator\Console\Command;
 
+use Sokil\Mongo\Migrator\ManagerBuilder;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use \Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputOption;
+use Sokil\Mongo\Migrator\Console\AbstractCommand;
 
-class Init extends \Sokil\Mongo\Migrator\Console\Command
+class Init extends AbstractCommand
 {
-    private $allowedConfigFormats = array('yaml', 'php');
-   
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName('init')
             ->setDescription('Initialize migrations project')
@@ -20,46 +22,80 @@ class Init extends \Sokil\Mongo\Migrator\Console\Command
                 '--configFormat',
                 '-f',
                 InputOption::VALUE_OPTIONAL,
-                'Format of config (use one of "' . implode('","', $this->allowedConfigFormats) . '")',
-                'yaml'
+                sprintf(
+                    'Format of config (use one of "%s"). Must be skipped if --configuration parameter specified.',
+                    implode('","', ManagerBuilder::ALLOWED_CONFIG_FORMATS)
+                ),
+                ManagerBuilder::FORMAT_YAML
+            )
+            ->addOption(
+                '--configuration',
+                '-c',
+                InputOption::VALUE_REQUIRED,
+                'The configuration file to create. Must be skipped if --configFormat parameter specified'
             );
     }
-    
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->isProjectInitialisd()) {
-            throw new \Exception('Migration project already initialised');
+        $configurationPath = $input->getOption('configuration');
+
+        if (empty($configurationPath)) {
+            // get config format
+            $configFormat = $input->getOption('configFormat');
+
+            // build path to default config
+            $configurationPath = sprintf(
+                '%s/%s.%s',
+                $this->getProjectRoot(),
+                ManagerBuilder::DEFAULT_CONFIG_FILENAME,
+                $configFormat
+            );
+        } else {
+            $configFormat = pathinfo($configurationPath, PATHINFO_EXTENSION);
         }
-        
-        // check permissions
-        $configPath = $this->getProjectRoot();
-        if (!is_writable($this->getProjectRoot())) {
-            throw new \Exception('Directory ' . $configPath . ' must be writeabe');
-        }
-        
-        $configFormat = $input->getOption('configFormat');
-        if (!in_array($configFormat, $this->allowedConfigFormats)) {
+
+        if (!in_array($configFormat, ManagerBuilder::ALLOWED_CONFIG_FORMATS)) {
             throw new \Exception('Config format "' . $configFormat . '" not allowed');
         }
-        
+
+        if (file_exists($configurationPath)) {
+            throw new \Exception('Migration project already initialised');
+        }
+
+        // check permissions
+        if (!is_writable($configurationPath)) {
+            throw new \Exception('Can not write configuration');
+        }
+
         // copy config to target path
-        $configPatternPath = __DIR__ . '/../../../templates/' . self::CONFIG_FILENAME . '.' . $configFormat;
-        $targetConfigPath = $configPath . '/' . self::CONFIG_FILENAME . '.' . $configFormat;
-        if (!copy($configPatternPath, $targetConfigPath)) {
-            throw new \Exception('Can\'t write config to target directory <info>' . $configPath . '</info>');
+        $configPatternPath = __DIR__ . '/../../../templates/' . ManagerBuilder::DEFAULT_CONFIG_FILENAME . '.' . $configFormat;
+        if (!copy($configPatternPath, $configurationPath)) {
+            throw new \Exception('Can\'t write config to target directory <info>' . $configurationPath . '</info>');
         }
         
-        $output->writeln('Project config "mongo-migrator.yaml" created at <info>' . $configPath . '</info>');
+        $output->writeln(
+            sprintf(
+                'Project configuration created at <info>%s</info>',
+                $configurationPath
+            )
+        );
+
+        // init manager
+        $this->initialiseManager($configurationPath);
+
+        // create directory for migrations
+        $this->getManager()->createMigrationsDir();
         
-        // create migrations dir
-        $migrationsDirectory = $this->getManager()->getMigrationsDir();
-        
-        if (!file_exists($migrationsDirectory)) {
-            if (!mkdir($migrationsDirectory, 0755, true)) {
-                throw new \Exception('Can\'t create migrations directory ' . $migrationsDirectory);
-            }
-        }
-        
-        $output->writeln('Directory for migrations created at <info>' . $migrationsDirectory . '</info>');
+        $output->writeln(
+            sprintf(
+                'Directory for migrations created at <info>%s</info>',
+                $this->getManager()->getMigrationsDir()
+            )
+        );
     }
 }

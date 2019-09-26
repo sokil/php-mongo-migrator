@@ -3,7 +3,6 @@
 namespace Sokil\Mongo\Migrator;
 
 use Symfony\Component\Yaml\Yaml;
-use Sokil\Mongo\Migrator\Console\Command;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
@@ -11,7 +10,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     
     public function setUp()
     {
-        $configFile = __DIR__ . '/' . Command::CONFIG_FILENAME . '.yaml';
+        $configFile = __DIR__ . '/' . ManagerBuilder::DEFAULT_CONFIG_FILENAME . '.yaml';
         $this->config = new Config(Yaml::parse(file_get_contents($configFile)));
     }
     
@@ -44,7 +43,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
     public function testGetConnectOptions()
     {
-        $this->assertEquals(array('replicaSet' => 'testrs'), $this->config->getConnectOptions('development'));
+        $this->assertEquals(array('replicaSet' => 'testrs'), $this->config->getConnectOptions('development-replicaset'));
         $this->assertEquals(array(), $this->config->getConnectOptions('staging'));
     }
     
