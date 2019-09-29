@@ -59,23 +59,35 @@ class Init extends AbstractCommand
             $configFormat = pathinfo($configurationPath, PATHINFO_EXTENSION);
         }
 
-        if (!in_array($configFormat, ManagerBuilder::ALLOWED_CONFIG_FORMATS)) {
-            throw new \Exception('Config format "' . $configFormat . '" not allowed');
+        // check if configuration path is valid and may be written
+        if (substr($configurationPath, -1) === '/') {
+            throw new \Exception('File need to be specified, directory found');
         }
 
         if (file_exists($configurationPath)) {
             throw new \Exception('Migration project already initialised');
         }
 
-        // check permissions
-        if (!is_writable($configurationPath)) {
-            throw new \Exception('Can not write configuration');
+        if (!is_writable(dirname($configurationPath))) {
+            throw new \Exception(sprintf(
+                'Can not write configuration to %s, directory is not writable',
+                dirname($configurationPath)
+            ));
+        }
+
+        if (empty($configFormat)) {
+            throw new \Exception(sprintf(
+                'Config file must be with one of extensions: %s',
+                implode(', ', ManagerBuilder::ALLOWED_CONFIG_FORMATS)
+            ));
+        } elseif (!in_array($configFormat, ManagerBuilder::ALLOWED_CONFIG_FORMATS)) {
+            throw new \Exception('Config format "' . $configFormat . '" not allowed');
         }
 
         // copy config to target path
-        $configPatternPath = __DIR__ . '/../../../te+mplates/' . ManagerBuilder::DEFAULT_CONFIG_FILENAME . '.' . $configFormat;
+        $configPatternPath = __DIR__ . '/../../../templates/' . ManagerBuilder::DEFAULT_CONFIG_FILENAME . '.' . $configFormat;
         if (!copy($configPatternPath, $configurationPath)) {
-            throw new \Exception('Can\'t write config to target directory <info>' . $configurationPath . '</info>');
+            throw new \Exception('Can\'t write config to <info>' . $configurationPath . '</info>');
         }
         
         $output->writeln(
