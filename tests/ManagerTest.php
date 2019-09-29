@@ -17,6 +17,9 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
             $configFile = __DIR__ . '/' . ManagerBuilder::DEFAULT_CONFIG_FILENAME . '.yaml';
             $config = Yaml::parse(file_get_contents($configFile));
 
+            // make path to migrations absolute
+            $config['path']['migrations'] = __DIR__ . '/' . $config['path']['migrations'];
+
             // replace dsn with env value
             $envDSN = getenv('PHPMONGO_DSN');
             if ($envDSN) {
@@ -27,8 +30,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
             // init manager
             $this->manager = new ManagerMock(
-                new Config($config),
-                __DIR__
+                new Config($config)
             );
 
             $this->manager->resetCollection('staging');
