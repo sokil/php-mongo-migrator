@@ -63,20 +63,7 @@ abstract class AbstractCommand extends Command
         $managerBuilder = new ManagerBuilder();
 
         // create manager
-        $this->manager = $managerBuilder->build(
-            $this->getProjectRoot(),
-            $configurationPath
-        );
-    }
-
-    /**
-     * Project root
-     *
-     * @return string
-     */
-    public function getProjectRoot()
-    {
-        return getcwd();
+        $this->manager = $managerBuilder->build($configurationPath);
     }
     
     /**

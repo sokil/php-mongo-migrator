@@ -24,25 +24,21 @@ class ManagerBuilder
     const DEFAULT_CONFIG_FILENAME = 'mongo-migrator';
 
     /**
-     * @param string $projectRoot
      * @param string|null $configurationPath
      *
      * @return Manager
      */
-    public function build($projectRoot, $configurationPath = null)
+    public function build($configurationPath = null)
     {
         if (empty($configurationPath)) {
-            $configurationPath = $this->locateDefaultConfigurationPath($projectRoot);
+            $configurationPath = $this->locateDefaultConfigurationPath(getcwd());
         }
 
         // load configuration
         $config = $this->loadConfiguration($configurationPath);
 
         // create manager
-        $manager = new Manager(
-            $config,
-            $projectRoot
-        );
+        $manager = new Manager($config);
 
         return $manager;
     }
@@ -102,6 +98,18 @@ class ManagerBuilder
             throw new \InvalidArgumentException('Invalid config format');
         }
 
+        // validate and normalize migrations path
+        if (empty($configuration['path']['migrations'])) {
+            throw new \Exception('Migrations path not specified');
+        } else {
+            if ($configuration['path']['migrations'][0] !== '/') {
+                $configuration['path']['migrations'] = dirname($configurationPath)
+                    . '/'
+                    . rtrim($configuration['path']['migrations'], '/');
+            }
+        }
+
+        // build configuration
         return new Config($configuration);
     }
 }

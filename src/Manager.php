@@ -16,11 +16,6 @@ class Manager
      * @var Config
      */
     private $config;
-
-    /**
-     * @var string
-     */
-    private $rootDir;
     
     /**
      * @var Client
@@ -42,10 +37,9 @@ class Manager
      */
     private $eventDispatcher;
     
-    public function __construct(Config $config, $rootDir)
+    public function __construct(Config $config)
     {
         $this->config = $config;
-        $this->rootDir = $rootDir;
         $this->eventDispatcher = new EventDispatcher;
     }
     
@@ -74,11 +68,8 @@ class Manager
     public function getMigrationsDir()
     {
         $migrationsDir = $this->config->getMigrationsDir();
-        if ($migrationsDir[0] === '/') {
-            return $migrationsDir;
-        }
-        
-        return $this->rootDir . '/' . rtrim($migrationsDir, '/');
+
+        return $migrationsDir;
     }
 
     /**

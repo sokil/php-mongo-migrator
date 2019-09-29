@@ -51,7 +51,7 @@ class Init extends AbstractCommand
             // build path to default config
             $configurationPath = sprintf(
                 '%s/%s.%s',
-                $this->getProjectRoot(),
+                getcwd(),
                 ManagerBuilder::DEFAULT_CONFIG_FILENAME,
                 $configFormat
             );
@@ -73,7 +73,7 @@ class Init extends AbstractCommand
         }
 
         // copy config to target path
-        $configPatternPath = __DIR__ . '/../../../templates/' . ManagerBuilder::DEFAULT_CONFIG_FILENAME . '.' . $configFormat;
+        $configPatternPath = __DIR__ . '/../../../te+mplates/' . ManagerBuilder::DEFAULT_CONFIG_FILENAME . '.' . $configFormat;
         if (!copy($configPatternPath, $configurationPath)) {
             throw new \Exception('Can\'t write config to target directory <info>' . $configurationPath . '</info>');
         }

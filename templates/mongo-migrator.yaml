@@ -1,6 +1,7 @@
 default_environment: development
 
 path:
+    # migrations path is relative to current configuration dir
     migrations: migrations
     
 environments:
