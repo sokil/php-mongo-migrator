@@ -114,7 +114,7 @@ class Init extends AbstractCommand
         }
 
         // render configuration from template
-        $configTemplatePath = __DIR__ . '/../../../templates/' . ManagerBuilder::DEFAULT_CONFIG_FILENAME . '.' . $configFormat;
+        $configTemplatePath = __DIR__ . '/../../../templates/configurationTemplate' . '.' . $configFormat . '.dist';
 
         $configBody = str_replace(
             [
