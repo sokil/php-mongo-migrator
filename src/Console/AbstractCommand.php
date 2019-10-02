@@ -33,7 +33,7 @@ abstract class AbstractCommand extends Command
             $this->addOption(
                 '--environment',
                 '-e',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Environment name'
             );
         }

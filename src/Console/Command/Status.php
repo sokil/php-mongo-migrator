@@ -25,7 +25,7 @@ class Status extends AbstractCommand implements
             ->addOption(
                 '--length',
                 '-l',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Limit list by number of last revisions. If not set, show all revisions.'
             );
     }

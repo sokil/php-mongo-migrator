@@ -99,9 +99,19 @@ vendor/bin/mongo-migrator init
 
 This creates config file mongo-migrator.yaml and directory "./migrations", where migrations placed.
 Also you can use php config instead of yaml. Just initialise your project with php config format:
+
 ```
 vendor/bin/mongo-migrator init --configFormat=php
 ```
+
+You may explicitly define path to conficuration file, and also to migration dir:
+
+```
+vendor/bin/mongo-migrator init --configuration=confins/monfo-migrations.yaml --migrationDir=../migrations/mongo
+``` 
+
+If migration dir defined relatively, it points to dir where configuration stored. In example above migrations 
+dir will be `confins/../migrations/mongo`. 
 
 Configuration
 -------------
@@ -226,7 +236,7 @@ Status of migration
 -------------------
 If you want to see list of existed revisions with status of migration, run:
 ```
-vendor/bin/mongo-migrator status [-e environment]
+vendor/bin/mongo-migrator status [-e|--environment environment=ENVIRONMENT] [-c|--configuration=CONFIGURATION] [-l|--length=LENGTH]
 ```
 
 If revision status is "up", revision is applied, otherwise status will be "down".
@@ -238,23 +248,30 @@ If revision status is "up", revision is applied, otherwise status will be "down"
  20140607132630  up      RevisionName
 ```
 
+Option `configuration` allows specify path to project configuration, if it differ from default path. 
+Option `length` allows to limit elements in list.
+
 Migrating and rollback
 ----------------------
 
 You can migrate and rollback to any of available revisions. Commands to migrate:
 
 ```
-vendor/bin/mongo-migrator migrate  [-r revision] [-e environment]
+vendor/bin/mongo-migrator migrate  [-r|--revision revision] [-e|--environment environment] [-c|--configuration configuration]
 ```
 If revision not specified, migration goes to latest revision.
+
+Option `configuration` allows specify path to project configuration, if it differ from default path.
  
 Command to rollback:
 ```
-vendor/bin/mongo-migrator rollback [-r revision] [-e environment]
+vendor/bin/mongo-migrator rollback [-r|--revision revision] [-e|--environment environment] [-c|--configuration configuration]
 ```
 If revision not specified, rollback goes to previous revision.
 
-Writting migration scripts
+Option `configuration` allows specify path to project configuration, if it differ from default path.
+
+Writing migration scripts
 --------------------------
 
 Databases and collections accessable from migration script through methods 
@@ -349,6 +366,15 @@ gpg:                issuer "dmytro.sokil@gmail.com"
 gpg: Good signature from "Dmytro Sokil <dmytro.sokil@gmail.com>" [ultimate]
 
 ```
+
+You may build phars both for legacy and new driver by defining `MONGO_DRIVER` env variable:
+
+```
+make gpg-signed MONGO_DRIVER=new
+make gpg-signed MONGO_DRIVER=legacy
+```
+
+If `MONGO_DRIVER` env variable not passed, then `make` will try to detect your driver automatically.
 
 Development
 -----------
