@@ -8,19 +8,19 @@ return array(
     ),
     'environments' => array(
         'development' => array(
-            'dsn' => 'mongodb',
+            'dsn' => 'mongodb://localhost',
             'default_database' => 'test',
             'log_database' => 'test',
             'log_collection' => 'migrations',
         ),
         'staging' => array(
-            'dsn' => 'mongodb',
+            'dsn' => 'mongodb://localhost',
             'default_database' => 'test',
             'log_database' => 'test',
             'log_collection' => 'migrations',
         ),
         'production' => array(
-            'dsn' => 'mongodb',
+            'dsn' => 'mongodb://localhost',
             'default_database' => 'test',
             'log_database' => 'test',
             'log_collection' => 'migrations',
