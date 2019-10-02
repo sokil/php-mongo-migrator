@@ -1,3 +1,8 @@
+## 1.0 (2019-10-02)
+  * Stop support PHP < 5.6
+  * Adder `configuration` option to commands, that allows store configuration in any place
+  * Added `migrationDir` to `init` command that allows define directory with migrations file during project initialisation.
+
 ## 0.7.0 (2018-10-29)
   * Stop support of PHP 5.3
   * Status command now return migration list sorted from early to latest migration
