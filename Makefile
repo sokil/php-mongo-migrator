@@ -1,19 +1,42 @@
 default: unsigned
 
+# Define GPG key for GPG signing (required by phive)
 GPG_KEY_ID="dmytro.sokil@gmail.com"
 
-BOX_INSTALLED=$(box --version 2> /dev/null)
-
-check_box_installed:
-ifndef BOX_INSTALLED
+# Check if phar compiler installed
+ifeq ($(strip $(shell box --version 2> /dev/null)),)
 	$(error "box not installed")
 endif
 
+# Defing MongoDB driver
+ifndef ($(MONGO_DRIVER))
+	ifneq ($(shell php -m | grep mongodb),)
+		MONGO_DRIVER=new
+	else
+		ifneq ($(shell php -m | grep mongo),)
+			MONGO_DRIVER=legacy
+		else
+			MONGO_DRIVER=none
+		endif
+	endif
+endif
+
+
 pre-build:
+    ifeq ($(MONGO_DRIVER),new)
+		$(info New MongoDB driver found)
+    else ifeq ($(MONGO_DRIVER),legacy)
+		$(info Legacy MongoDB driver found)
+    else
+		$(error MongoDB driver "$(MONGO_DRIVER)" not found)
+    endif
 	rm -rf ./build
 	mkdir -p build
 	rm -f composer.lock
 	composer install --no-dev --prefer-dist -o
+    ifeq ($(MONGO_DRIVER),new)
+		composer require --update-no-dev --prefer-dist -o alcaeus/mongo-php-adapter
+    endif
 
 unsigned: pre-build
 	cat box.json | sed -E 's/\"key\": \".+\",//g' | sed -E 's/\"algorithm\": \".+\",//g' > box.unsigned.json

@@ -19,6 +19,9 @@ then
     yes '' | pecl install mongo-1.6.2
     docker-php-ext-enable mongo.so
 
+    yes '' | pecl install mongodb
+    docker-php-ext-enable mongodb.so
+
     # install ext-zip
     apt-get install --no-install-recommends -y zlib1g-dev
     docker-php-ext-install zip
