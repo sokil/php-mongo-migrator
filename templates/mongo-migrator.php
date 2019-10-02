@@ -4,7 +4,7 @@ return array(
     'default_environment' => 'development',
     'path' => array(
         // migrations path is relative to current configuration dir
-        'migrations' => 'migrations'
+        'migrations' => '{{MIGRATIONS_DIR}}'
     ),
     'environments' => array(
         'development' => array(

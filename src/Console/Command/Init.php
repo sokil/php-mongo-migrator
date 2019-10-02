@@ -10,6 +10,11 @@ use Sokil\Mongo\Migrator\Console\AbstractCommand;
 
 class Init extends AbstractCommand
 {
+    /**
+     * If directory is relative, it relates to dir with configuration file
+     */
+    const DEFAULT_MIGRATIONS_DIR = 'migrations';
+
     protected function configure()
     {
         parent::configure();
@@ -33,6 +38,12 @@ class Init extends AbstractCommand
                 '-c',
                 InputOption::VALUE_REQUIRED,
                 'The configuration file to create. Must be skipped if --configFormat parameter specified'
+            )
+            ->addOption(
+                '--migrationDir',
+                '-d',
+                InputOption::VALUE_REQUIRED,
+                'Directory with migration files. May be absolute or relative to configuration dir.'
             );
     }
 
@@ -42,6 +53,7 @@ class Init extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // get configuration path
         $configurationPath = $input->getOption('configuration');
 
         if (empty($configurationPath)) {
@@ -61,33 +73,64 @@ class Init extends AbstractCommand
 
         // check if configuration path is valid and may be written
         if (substr($configurationPath, -1) === '/') {
-            throw new \Exception('File need to be specified, directory found');
+            $output->writeln('<error>Path to configuration file need to be specified, directory found</error>');
+
+            return 1;
         }
 
         if (file_exists($configurationPath)) {
-            throw new \Exception('Migration project already initialised');
+            $output->writeln('<error>Migration project already initialised</error>');
+
+            return 1;
         }
 
         if (!is_writable(dirname($configurationPath))) {
-            throw new \Exception(sprintf(
-                'Can not write configuration to %s, directory is not writable',
+            $output->writeln(sprintf(
+                '<error>Can not write configuration to %s, directory is not writable</error>',
                 dirname($configurationPath)
             ));
+
+            return 1;
         }
 
+        // check config format
         if (empty($configFormat)) {
-            throw new \Exception(sprintf(
-                'Config file must be with one of extensions: %s',
+            $output->writeln(sprintf(
+                '<error>Config file must be with one of extensions: %s</error>',
                 implode(', ', ManagerBuilder::ALLOWED_CONFIG_FORMATS)
             ));
+
+            return 1;
         } elseif (!in_array($configFormat, ManagerBuilder::ALLOWED_CONFIG_FORMATS)) {
-            throw new \Exception('Config format "' . $configFormat . '" not allowed');
+            $output->writeln('<error>Config format "' . $configFormat . '" not allowed</error>');
+
+            return 1;
         }
 
-        // copy config to target path
-        $configPatternPath = __DIR__ . '/../../../templates/' . ManagerBuilder::DEFAULT_CONFIG_FILENAME . '.' . $configFormat;
-        if (!copy($configPatternPath, $configurationPath)) {
-            throw new \Exception('Can\'t write config to <info>' . $configurationPath . '</info>');
+        // get migrations dir
+        $migrationDir = $input->getOption('migrationDir');
+        if (empty($migrationDir)) {
+            $migrationDir = self::DEFAULT_MIGRATIONS_DIR;
+        }
+
+        // render configuration from template
+        $configTemplatePath = __DIR__ . '/../../../templates/' . ManagerBuilder::DEFAULT_CONFIG_FILENAME . '.' . $configFormat;
+
+        $configBody = str_replace(
+            [
+                '{{MIGRATIONS_DIR}}',
+            ],
+            [
+                $migrationDir,
+            ],
+            file_get_contents($configTemplatePath)
+        );
+
+        // write configuration to file
+        if (!file_put_contents($configurationPath, $configBody)) {
+            $output->writeln('<error>Can\'t write config to </error><info>' . $configurationPath . '</info>');
+
+            return 1;
         }
         
         $output->writeln(
