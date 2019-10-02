@@ -1,5 +1,7 @@
 composer.lock
+box.unsigned.json
 vendor/
 share/
 build/
+dist/
 keys/
