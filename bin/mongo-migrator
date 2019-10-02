@@ -16,6 +16,13 @@ foreach ($autoloadPathList as $autoloadPath) {
     }
 }
 
+// check if legacy MongoDb object model available
+if (!class_exists('\MongoCollection')) {
+    echo "Legacy mongo driver or compatible adapter from new to legacy driver is not available. \n";
+    echo "Please, check requirements at https://github.com/sokil/php-mongo-migrator#requirements. \n";
+    exit(1);
+}
+
 // start application
 $application = new \Sokil\Mongo\Migrator\Console\Application;
 $application->run();
