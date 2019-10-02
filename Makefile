@@ -50,8 +50,8 @@ gpg-signed: pre-build
 	rm -f box.unsigned.json
 	gpg --import keys/private.asc
 	gpg -u $(GPG_KEY_ID) --detach-sign --output build/$(PHAR_KEY_FILE) build/$(PHAR_FILE)
-	mv build/*.phar /dist
-	mv build/*.phar.asc /dist
+	mv build/*.phar dist
+	mv build/*.phar.asc dist
 
 openssl-signed: pre-build
 	box build -v
