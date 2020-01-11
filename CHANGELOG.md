@@ -1,4 +1,7 @@
-## 1.0 (2019-10-02)
+## 1.0.1 (2020-01-11)
+  * Increment verion of dependencies symfony/console and symfony/yaml
+
+## 1.0.0 (2019-10-02)
   * Stop support PHP < 5.6
   * Adder `configuration` option to commands, that allows store configuration in any place
   * Added `migrationDir` to `init` command that allows define directory with migrations file during project initialisation.
