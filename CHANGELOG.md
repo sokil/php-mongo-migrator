@@ -1,3 +1,6 @@
+## 1.0.2
+  * Fix command run with symfony/console >= 5.0
+
 ## 1.0.1 (2020-01-11)
   * Increment verion of dependencies symfony/console and symfony/yaml
 
