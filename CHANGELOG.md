@@ -1,4 +1,4 @@
-## 1.0.2
+## 1.0.2 (2020-02-14)
   * Fix command run with symfony/console >= 5.0
 
 ## 1.0.1 (2020-01-11)
