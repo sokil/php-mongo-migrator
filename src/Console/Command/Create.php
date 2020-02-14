@@ -67,5 +67,6 @@ class Create extends AbstractCommand implements ManagerAwareCommandInterface
         
         // show result
         $output->writeln('New migration created at ' . $migrationFilePath);
+        return 0;
     }
 }

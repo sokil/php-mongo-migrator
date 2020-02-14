@@ -152,5 +152,6 @@ class Init extends AbstractCommand
                 $this->getManager()->getMigrationsDir()
             )
         );
+        return 0;
     }
 }
