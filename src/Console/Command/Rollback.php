@@ -53,5 +53,6 @@ class Rollback extends AbstractCommand implements
                 $output->writeln('done.');
             })
             ->rollback($revision, $environment);
+        return 0;
     }
 }

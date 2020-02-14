@@ -85,5 +85,6 @@ class Status extends AbstractCommand implements
         }
         
         $output->writeln('');
+        return 0;
     }
 }

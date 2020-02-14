@@ -53,5 +53,6 @@ class Migrate extends AbstractCommand implements
                 $output->writeln('done.');
             })
             ->migrate($revision, $environment);
+        return 0;
     }
 }
